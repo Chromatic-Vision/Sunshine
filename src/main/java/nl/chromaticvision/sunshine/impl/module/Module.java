@@ -134,6 +134,14 @@ public class Module {
         return null;
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Category getCategory() {
+        return this.category;
+    }
+
     public void onTick() {}
     public void onFastTick() {}
     public void onLiving() {}

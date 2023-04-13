@@ -8,7 +8,9 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import nl.chromaticvision.sunshine.impl.module.modules.misc.ClickGUIModule;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.ExampleModule;
+import nl.chromaticvision.sunshine.impl.module.modules.movement.Fly;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -23,6 +25,9 @@ public class ModuleManager {
         modules = new ArrayList<>();
 
         modules.add(new ExampleModule());
+        modules.add(new ClickGUIModule());
+
+        modules.add(new Fly());
     }
 
     @SubscribeEvent
@@ -73,5 +78,22 @@ public class ModuleManager {
                 }
             });
         }
+    }
+
+    public ArrayList<Module> getModuleByCategory(Category category) {
+
+        ArrayList<Module> categoryModules = new ArrayList<>();
+
+        modules.forEach(m -> {
+            if (m.getCategory() == category) {
+                categoryModules.add(m);
+            }
+        });
+
+        return categoryModules;
+    }
+
+    public ArrayList<Module> getModules() {
+        return modules;
     }
 }
