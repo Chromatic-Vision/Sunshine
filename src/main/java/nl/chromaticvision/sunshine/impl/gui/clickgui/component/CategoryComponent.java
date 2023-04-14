@@ -2,20 +2,21 @@ package nl.chromaticvision.sunshine.impl.gui.clickgui.component;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.ClickGUI;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class CategoryComponent {
 
-    public int x;
-    public int y;
-    public int x2;
-    public int y2;
-    public int width;
-    public int height;
-    public boolean open = true;
-    public String name;
+    private int x;
+    private int y;
+    private int x2;
+    private int y2;
+    private int width;
+    private int height;
+    private boolean open = true;
+    private String name;
 
     private static final Minecraft mc = Minecraft.getMinecraft();
     public ArrayList<ModuleCompoment> moduleCompoments = new ArrayList<>();
@@ -28,37 +29,23 @@ public class CategoryComponent {
         this.name = name;
     }
 
-    public void addModuleComponents(ModuleCompoment moduleCompoment) {
-        moduleCompoments.add(moduleCompoment);
-    }
-
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 
-        x2 = x + width;
-        y2 = y + height;
-
-        Gui.drawRect(x, y, x2, y2, new Color(244, 166, 34).getRGB());
+        Gui.drawRect(x, y, x + width, y + height, new Color(244, 166, 34).getRGB());
         mc.fontRenderer.drawString(this.getName(), x + 2, y + 5, -1);
 
         if (open) {
-
-            int ry = y + 25;
-
-            for (ModuleCompoment moduleCompoment : moduleCompoments) {
-                Gui.drawRect(x, ry, x2, ry + 25, new Color(34, 155, 66).getRGB());
-                mc.fontRenderer.drawString(moduleCompoment.parentModule.getName(), x + 2, ry + 5, -1);
-
-                ry += 30;
-            }
+            moduleCompoments.forEach(moduleCompoment -> moduleCompoment.drawScreen(mouseX, mouseY, partialTicks));
         }
     }
 
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if (mouseX > x && mouseX < x2 && mouseY > y && mouseY < y2) {
-            if (mouseButton == 1) {
-                open = !isOpen();
-            }
+
+        if (open) {
+            moduleCompoments.forEach(moduleCompoment -> moduleCompoment.mouseClicked(mouseX, mouseY, mouseButton));
         }
+
+        if (ClickGUI.isHovering(mouseX, mouseY, x, y, x + width, y + height) && mouseButton == 1) open = !open;
     }
 
     public int getX() {

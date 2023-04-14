@@ -1,12 +1,17 @@
 package nl.chromaticvision.sunshine.impl.gui.clickgui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import nl.chromaticvision.sunshine.Main;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.component.CategoryComponent;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.component.ModuleCompoment;
 import nl.chromaticvision.sunshine.impl.module.Category;
+import nl.chromaticvision.sunshine.impl.module.Module;
+import nl.chromaticvision.sunshine.impl.module.settings.Setting;
+import org.lwjgl.input.Mouse;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -22,14 +27,46 @@ public class ClickGUI extends GuiScreen {
     public void load() {
 
         int x = 0;
+        int cx = 0;
+        int cy = 30;
 
         for (Category category : Category.values()) {
 
             CategoryComponent component = new CategoryComponent(x += 100, 5, 95, 20, category.name().toLowerCase());
-            Main.moduleManager.getModuleByCategory(category).forEach(module -> component.addModuleComponents(new ModuleCompoment(module, 80, 18)));
+
+            for (Module module : Main.moduleManager.getModuleByCategory(category)) {
+                component.moduleCompoments.add(new ModuleCompoment(module, cx, cy, 95, 21));
+                cy += 22;
+            }
+
+            cx += 100;
+            cy = 30;
 
             categoryComponents.add(component);
         }
+    }
+
+    public void checkMouseWheel() {
+        int dWheel = Mouse.getDWheel();
+        if (dWheel < 0) {
+            categoryComponents.forEach(categoryComponent -> categoryComponent.setY(categoryComponent.getY() - 10));
+        } else if (dWheel > 0) {
+            categoryComponents.forEach(categoryComponent -> categoryComponent.setY(categoryComponent.getY() + 10));
+        }
+    }
+
+    public static boolean isHovering(int mouseX, int mouseY, int x, int y, int x2, int y2) {
+        return mouseX >= x && mouseX <= x2 && mouseY >= y && mouseY <= y2;
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
+    }
+
+    @Override
+    public void updateScreen() {
+        checkMouseWheel();
     }
 
     @Override
@@ -41,4 +78,6 @@ public class ClickGUI extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         categoryComponents.forEach(categoryComponent -> categoryComponent.mouseClicked(mouseX, mouseY, mouseButton));
     }
+
+
 }
