@@ -93,6 +93,13 @@ public class ModuleManager {
         return categoryModules;
     }
 
+    public Module getModuleByName(String name) {
+        for (Module module : modules) {
+            if (module.getName().equalsIgnoreCase(name)) return module;
+        }
+        return null;
+    }
+
     public ArrayList<Module> getModules() {
         return modules;
     }

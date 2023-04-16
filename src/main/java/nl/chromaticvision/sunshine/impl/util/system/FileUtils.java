@@ -1,8 +1,6 @@
 package nl.chromaticvision.sunshine.impl.util.system;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import nl.chromaticvision.sunshine.Main;
 import nl.chromaticvision.sunshine.impl.module.Module;
 import nl.chromaticvision.sunshine.impl.module.settings.Bind;
@@ -13,7 +11,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class FileUtils {
 
@@ -25,6 +25,32 @@ public class FileUtils {
         if (!sunshine.exists()) sunshine.mkdir();
         if (!config.exists()) config.mkdir();
 
+        saveActiveModuleConfig();
+        saveModuleSettings();
+    }
+
+    public static void saveActiveModuleConfig()  {
+        File file = new File(sunshine + "/activemodules.stc");
+
+        try {
+            if (!file.exists()) file.createNewFile();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+
+        try (FileWriter fileWriter = new FileWriter(file)) {
+
+            for (Module module : Main.moduleManager.getModules()) {
+                fileWriter.write(module.getName() + ">" + module.isEnabled() + "\n");
+            }
+
+            fileWriter.flush();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public static void saveModuleSettings() {
         for (Module module : Main.moduleManager.getModules()) {
 
             JsonObject jsonObject = new JsonObject();
@@ -42,7 +68,12 @@ public class FileUtils {
             }
 
             try (FileWriter fileWriter = new FileWriter(config + "/" + module.getName() + ".json")) {
-                fileWriter.write(jsonObject.toString());
+
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                JsonElement jsonElement = jsonParser.parse(jsonObject.toString());
+                String prettyJsonString = gson.toJson(jsonElement);
+
+                fileWriter.write(prettyJsonString);
                 fileWriter.flush();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -66,12 +97,43 @@ public class FileUtils {
             return;
         }
 
+        loadActiveModuleConfig();
+        loadModuleSettings();
+    }
+
+    public static void loadActiveModuleConfig() {
+        File file = new File(sunshine + "/activemodules.stc");
+
+        try {
+
+            if (!file.exists()) {
+                file.createNewFile();
+                return;
+            }
+
+            Scanner scanner = new Scanner(file);
+            List<String> lines = Files.readAllLines(file.toPath());
+
+            for (String line : lines) {
+
+                String[] regex = line.split(">");
+                Module module = Main.moduleManager.getModuleByName(regex[0]);
+
+                if (module == null) continue;
+
+                module.setEnabled(Boolean.parseBoolean(regex[1]), false);
+            }
+
+            scanner.close();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+    }
+
+    public static void loadModuleSettings() {
         for (Module module : Main.moduleManager.getModules()) {
 
             Path path = Paths.get(config + "/" + module.getName() + ".json");
-
-            System.out.println(path);
-
             File file = path.toFile();
 
             if (!file.exists()) continue;
@@ -80,8 +142,6 @@ public class FileUtils {
 
                 //set module settings from json
                 JsonObject jsonObject = (new JsonParser()).parse(new InputStreamReader(Files.newInputStream(path))).getAsJsonObject();
-
-                System.out.println(jsonObject.toString());
 
                 for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
 
@@ -131,7 +191,6 @@ public class FileUtils {
                             }
                     }
                 }
-
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }

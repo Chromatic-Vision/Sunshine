@@ -18,7 +18,7 @@ public class ClickGUIModule extends Module {
 
         mc.displayGuiScreen(new ClickGUI());
 
-        disable();
+        setEnabled(false, false);
     }
 
     @Override
