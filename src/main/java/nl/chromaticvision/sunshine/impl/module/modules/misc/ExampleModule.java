@@ -10,6 +10,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
+import nl.chromaticvision.sunshine.impl.module.settings.Setting;
+import nl.chromaticvision.sunshine.impl.util.system.FileUtils;
 import org.lwjgl.input.Keyboard;
 
 public class ExampleModule extends Module {
@@ -18,6 +20,8 @@ public class ExampleModule extends Module {
         super("ExampleModule", "Simple scaffold module example", Category.MISC);
         setKeybind(Keyboard.KEY_Z);
     }
+
+    public final Setting<Boolean> silent = register(new Setting<>("Silent", false));
 
     @Override
     public void onEnable() {
@@ -60,7 +64,7 @@ public class ExampleModule extends Module {
 
             if (!validside) return;
 
-            // mc.player.inventory.currentItem = block;
+            if (!silent.getValue()) mc.player.inventory.currentItem = block;
             mc.player.connection.sendPacket(new CPacketHeldItemChange(block));
             mc.playerController.updateController();
 

@@ -9,7 +9,6 @@ public class Fly extends Module {
 
     public Fly() {
         super("Fly", Category.MOVEMENT);
-        setKeybind(Keyboard.KEY_V);
     }
 
     public final Setting<Boolean> test1 = register(new Setting<>("Test1", true));

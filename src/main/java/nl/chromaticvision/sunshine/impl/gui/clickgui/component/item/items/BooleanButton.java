@@ -13,13 +13,13 @@ public class BooleanButton extends SettingItem {
     public BooleanButton(Setting setting) {
         super(setting.getName());
         this.setting = setting;
-        this.setWidth(80);
-        this.setHeight(15);
+        this.setWidth(96);
+        this.setHeight(16);
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        Gui.drawRect(this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight(), this.getState() ? new Color(155, 23, 77).getRGB() : new Color(65, 233, 113).getRGB());
+        Gui.drawRect(this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight(), this.getState() ? new Color(65, 233, 113).getRGB() : new Color(155, 23, 77).getRGB());
         mc.fontRenderer.drawString(this.getName(), this.getX() + 2, this.getY() + 5, -1);
     }
 

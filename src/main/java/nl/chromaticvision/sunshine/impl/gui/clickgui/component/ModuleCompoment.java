@@ -38,30 +38,31 @@ public class ModuleCompoment {
     public void init() {
         if (parentModule.getSettings().size() > 0) {
 
-            int sy = y + 5;
+            int sy = 3;
 
             for (Setting setting : parentModule.getSettings()) {
+
+                if (!setting.isVisible()) continue;
+
                 if (setting.getValue() instanceof Boolean) {
 
                     BooleanButton booleanButton = new BooleanButton(setting);
-                    booleanButton.setLocation(x + 5, y + sy);
+                    booleanButton.setLocation(x + 1, y + sy);
 
                     items.add(booleanButton);
                 }
 
-                sy += 18;
+                sy += 17;
             }
         }
     }
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        Gui.drawRect(x, y, x + width, y + height, new Color(34, 155, 66).getRGB());
+        Gui.drawRect(x, y, x + width, y + height, parentModule.isEnabled() ? new Color(34, 155, 66).getRGB() : new Color(60, 30, 30).getRGB());
         mc.fontRenderer.drawString(parentModule.getName(), x + 2, y + 5, -1);
 
         if (open) {
-            items.stream()
-                    .filter(SettingItem::isVisible)
-                    .forEach(item -> item.drawScreen(mouseX, mouseY, partialTicks));
+            items.forEach(item -> item.drawScreen(mouseX, mouseY, partialTicks));
         }
     }
 
@@ -79,9 +80,7 @@ public class ModuleCompoment {
         }
 
         if (open) {
-            items.stream()
-                    .filter(SettingItem::isVisible)
-                    .forEach(item -> item.mouseClicked(mouseX, mouseY, mouseButton));
+            items.forEach(item -> item.mouseClicked(mouseX, mouseY, mouseButton));
         }
     }
 

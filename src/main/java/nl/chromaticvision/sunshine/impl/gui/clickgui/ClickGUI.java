@@ -9,6 +9,7 @@ import nl.chromaticvision.sunshine.impl.gui.clickgui.component.ModuleCompoment;
 import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
+import nl.chromaticvision.sunshine.impl.util.system.FileUtils;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -28,19 +29,20 @@ public class ClickGUI extends GuiScreen {
 
         int x = 0;
         int cx = 0;
-        int cy = 30;
+        int cy = 23;
 
         for (Category category : Category.values()) {
 
-            CategoryComponent component = new CategoryComponent(x += 100, 5, 95, 20, category.name().toLowerCase());
+            CategoryComponent component = new CategoryComponent(x, 5, 100, 16, category.name().toLowerCase());
 
             for (Module module : Main.moduleManager.getModuleByCategory(category)) {
-                component.moduleCompoments.add(new ModuleCompoment(module, cx, cy, 95, 21));
-                cy += 22;
+                component.moduleCompoments.add(new ModuleCompoment(module, cx + 1, cy, 98, 18));
+                cy += 19;
             }
 
-            cx += 100;
-            cy = 30;
+            x += 102;
+            cx += 102;
+            cy = 23;
 
             categoryComponents.add(component);
         }
@@ -49,14 +51,31 @@ public class ClickGUI extends GuiScreen {
     public void checkMouseWheel() {
         int dWheel = Mouse.getDWheel();
         if (dWheel < 0) {
-            categoryComponents.forEach(categoryComponent -> categoryComponent.setY(categoryComponent.getY() - 10));
+            categoryComponents.forEach(categoryComponent -> {
+                categoryComponent.setY(categoryComponent.getY() - 10);
+                categoryComponent.moduleCompoments.forEach(moduleCompoment -> {
+                    moduleCompoment.setY(moduleCompoment.getY() - 10);
+                    moduleCompoment.items.forEach(item -> item.setY(item.getY() - 10));
+                });
+            });
         } else if (dWheel > 0) {
-            categoryComponents.forEach(categoryComponent -> categoryComponent.setY(categoryComponent.getY() + 10));
+            categoryComponents.forEach(categoryComponent -> {
+                categoryComponent.setY(categoryComponent.getY() + 10);
+                categoryComponent.moduleCompoments.forEach(moduleCompoment -> {
+                    moduleCompoment.setY(moduleCompoment.getY() + 10);
+                    moduleCompoment.items.forEach(item -> item.setY(item.getY() + 10));
+                });
+            });
         }
     }
 
     public static boolean isHovering(int mouseX, int mouseY, int x, int y, int x2, int y2) {
         return mouseX >= x && mouseX <= x2 && mouseY >= y && mouseY <= y2;
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
     }
 
     @Override
@@ -70,7 +89,15 @@ public class ClickGUI extends GuiScreen {
     }
 
     @Override
+    public void onGuiClosed() {
+        FileUtils.saveConfig();
+    }
+
+    @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+
+        this.drawDefaultBackground();
+
         categoryComponents.forEach(categoryComponent -> categoryComponent.drawScreen(mouseX, mouseY, partialTicks));
     }
 

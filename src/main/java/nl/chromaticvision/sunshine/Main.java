@@ -5,6 +5,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import nl.chromaticvision.sunshine.impl.module.ModuleManager;
+import nl.chromaticvision.sunshine.impl.util.system.FileUtils;
 
 @Mod(name = Reference.NAME,
         version = Reference.VERSION,
@@ -26,6 +27,6 @@ public class Main {
 
     @Mod.EventHandler
     public void onInit(FMLInitializationEvent event) {
-
+        FileUtils.loadConfig();
     }
 }

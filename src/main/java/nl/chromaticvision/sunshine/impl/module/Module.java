@@ -1,6 +1,5 @@
 package nl.chromaticvision.sunshine.impl.module;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -30,6 +29,7 @@ public class Module {
         this.settings.add(setting);
         return setting;
     }
+
     public Setting<Bind> bind = register(new Setting<>("Keybind", new Bind(-1)));
 
     public Module(String name, Category category) {
