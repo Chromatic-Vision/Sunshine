@@ -15,12 +15,14 @@ import java.util.ArrayList;
 
 public class ModuleCompoment {
 
-    private final Module parentModule;
+    public final Module parentModule;
     private int x;
     private int y;
     private int width;
     private int height;
     private boolean open = false;
+
+    public int offsetHeight = 1;
 
     private static final Minecraft mc = Minecraft.getMinecraft();
     public ArrayList<SettingItem> items = new ArrayList<>();
@@ -52,7 +54,7 @@ public class ModuleCompoment {
                     items.add(booleanButton);
                 }
 
-                sy += 17;
+                sy += 16 + offsetHeight;
             }
         }
     }
@@ -84,6 +86,18 @@ public class ModuleCompoment {
         }
     }
 
+    public int getTotalItemHeight() {
+
+        if (!open) return 0;
+
+        int i = 3; //offset
+
+        for (SettingItem settingItem : items) {
+            i += settingItem.getHeight() + offsetHeight;
+        }
+
+        return i;
+    }
 
     public int getX() {
         return x;

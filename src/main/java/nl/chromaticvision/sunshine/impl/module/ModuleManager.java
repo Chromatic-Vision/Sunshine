@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.ClickGUIModule;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.ExampleModule;
 import nl.chromaticvision.sunshine.impl.module.modules.movement.Fly;
+import nl.chromaticvision.sunshine.impl.module.modules.movement.LongJump;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -28,6 +29,7 @@ public class ModuleManager {
         modules.add(new ClickGUIModule());
 
         modules.add(new Fly());
+        modules.add(new LongJump());
     }
 
     @SubscribeEvent

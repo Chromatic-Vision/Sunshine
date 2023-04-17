@@ -3,6 +3,9 @@ package nl.chromaticvision.sunshine.impl.gui.clickgui.component;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.ClickGUI;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.component.item.SettingItem;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.component.item.items.BooleanButton;
+import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -35,7 +38,21 @@ public class CategoryComponent {
         mc.fontRenderer.drawString(this.getName(), x + 2, y + 5, -1);
 
         if (open) {
-            moduleCompoments.forEach(moduleCompoment -> moduleCompoment.drawScreen(mouseX, mouseY, partialTicks));
+
+            int renderOffset = 0;
+
+            for (ModuleCompoment moduleCompoment : moduleCompoments) { //TODO: fix
+
+                if (moduleCompoment.isOpen()) {
+                    renderOffset += moduleCompoment.getTotalItemHeight();
+                }
+
+                if (renderOffset > 0) {
+                    moduleCompoment.setY(moduleCompoment.getY() + renderOffset);
+                }
+
+                moduleCompoment.drawScreen(mouseX, mouseY, partialTicks);
+            }
         }
     }
 
