@@ -3,9 +3,6 @@ package nl.chromaticvision.sunshine.impl.gui.clickgui.component;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.ClickGUI;
-import nl.chromaticvision.sunshine.impl.gui.clickgui.component.item.SettingItem;
-import nl.chromaticvision.sunshine.impl.gui.clickgui.component.item.items.BooleanButton;
-import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -20,9 +17,11 @@ public class CategoryComponent {
     private int height;
     private boolean open = true;
     private String name;
+    public static int[] counter1 = new int[]{1};
+
 
     private static final Minecraft mc = Minecraft.getMinecraft();
-    public ArrayList<ModuleCompoment> moduleCompoments = new ArrayList<>();
+    public ArrayList<ModuleComponent> moduleComponents = new ArrayList<>();
 
     public CategoryComponent(int x, int y, int width, int height, String name) {
         this.x = x;
@@ -39,19 +38,23 @@ public class CategoryComponent {
 
         if (open) {
 
-            int renderOffset = 0;
+            int remainingHeight = 0;
 
-            for (ModuleCompoment moduleCompoment : moduleCompoments) { //TODO: fix
+            for (ModuleComponent component : moduleComponents) {
 
-                if (moduleCompoment.isOpen()) {
-                    renderOffset += moduleCompoment.getTotalItemHeight();
+                if (component.isOpen()) {
+                    remainingHeight += component.getTotalItemHeight();
+
+                    component.drawScreen(mouseX, mouseY, partialTicks);
+                    continue;
                 }
 
-                if (renderOffset > 0) {
-                    moduleCompoment.setY(moduleCompoment.getY() + renderOffset);
+                if (remainingHeight > 0) {
+                    component.setY(component.getY() + remainingHeight);
+                    component.drawScreen(mouseX, mouseY, partialTicks);
+                } else {
+                    component.drawScreen(mouseX, mouseY, partialTicks);
                 }
-
-                moduleCompoment.drawScreen(mouseX, mouseY, partialTicks);
             }
         }
     }
@@ -59,10 +62,16 @@ public class CategoryComponent {
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 
         if (open) {
-            moduleCompoments.forEach(moduleCompoment -> moduleCompoment.mouseClicked(mouseX, mouseY, mouseButton));
+            moduleComponents.forEach(moduleComponent -> moduleComponent.mouseClicked(mouseX, mouseY, mouseButton));
         }
 
-        if (ClickGUI.isHovering(mouseX, mouseY, x, y, x + width, y + height) && mouseButton == 1) open = !open;
+        if (ClickGUI.isHovering(mouseX, mouseY, x, y, x + width, y + height) && mouseButton == 1) {
+            onTogglePanelState();
+        }
+    }
+
+    public void onTogglePanelState() {
+        open = !open;
     }
 
     public int getX() {

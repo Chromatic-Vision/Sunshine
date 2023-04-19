@@ -13,7 +13,7 @@ import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class ModuleCompoment {
+public class ModuleComponent {
 
     public final Module parentModule;
     private int x;
@@ -27,7 +27,7 @@ public class ModuleCompoment {
     private static final Minecraft mc = Minecraft.getMinecraft();
     public ArrayList<SettingItem> items = new ArrayList<>();
 
-    public ModuleCompoment(Module parentModule, int x, int y, int width, int height) {
+    public ModuleComponent(Module parentModule, int x, int y, int width, int height) {
         this.parentModule = parentModule;
         this.x = x;
         this.y = y;

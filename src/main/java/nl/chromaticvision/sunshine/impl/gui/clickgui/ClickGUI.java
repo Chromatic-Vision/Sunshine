@@ -1,18 +1,15 @@
 package nl.chromaticvision.sunshine.impl.gui.clickgui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import nl.chromaticvision.sunshine.Main;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.component.CategoryComponent;
-import nl.chromaticvision.sunshine.impl.gui.clickgui.component.ModuleCompoment;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.component.ModuleComponent;
 import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
-import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 import nl.chromaticvision.sunshine.impl.util.system.FileUtils;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -36,7 +33,7 @@ public class ClickGUI extends GuiScreen {
             CategoryComponent component = new CategoryComponent(x, 5, 100, 16, category.name().toLowerCase());
 
             for (Module module : Main.moduleManager.getModuleByCategory(category)) {
-                component.moduleCompoments.add(new ModuleCompoment(module, cx + 1, cy, 98, 18));
+                component.moduleComponents.add(new ModuleComponent(module, cx + 1, cy, 98, 18));
                 cy += 19;
             }
 
@@ -48,22 +45,22 @@ public class ClickGUI extends GuiScreen {
         }
     }
 
-    public void checkMouseWheel() {
+    public void checkMouseWheel() { //bruh
         int dWheel = Mouse.getDWheel();
         if (dWheel < 0) {
             categoryComponents.forEach(categoryComponent -> {
                 categoryComponent.setY(categoryComponent.getY() - 10);
-                categoryComponent.moduleCompoments.forEach(moduleCompoment -> {
-                    moduleCompoment.setY(moduleCompoment.getY() - 10);
-                    moduleCompoment.items.forEach(item -> item.setY(item.getY() - 10));
+                categoryComponent.moduleComponents.forEach(moduleComponent -> {
+                    moduleComponent.setY(moduleComponent.getY() - 10);
+                    moduleComponent.items.forEach(item -> item.setY(item.getY() - 10));
                 });
             });
         } else if (dWheel > 0) {
             categoryComponents.forEach(categoryComponent -> {
                 categoryComponent.setY(categoryComponent.getY() + 10);
-                categoryComponent.moduleCompoments.forEach(moduleCompoment -> {
-                    moduleCompoment.setY(moduleCompoment.getY() + 10);
-                    moduleCompoment.items.forEach(item -> item.setY(item.getY() + 10));
+                categoryComponent.moduleComponents.forEach(moduleComponent -> {
+                    moduleComponent.setY(moduleComponent.getY() + 10);
+                    moduleComponent.items.forEach(item -> item.setY(item.getY() + 10));
                 });
             });
         }
