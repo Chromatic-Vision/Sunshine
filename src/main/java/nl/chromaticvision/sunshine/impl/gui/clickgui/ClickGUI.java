@@ -3,8 +3,9 @@ package nl.chromaticvision.sunshine.impl.gui.clickgui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import nl.chromaticvision.sunshine.Main;
-import nl.chromaticvision.sunshine.impl.gui.clickgui.component.CategoryComponent;
-import nl.chromaticvision.sunshine.impl.gui.clickgui.component.ModuleComponent;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.components.CategoryComponent;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.components.ModuleComponent;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.components.SettingPanelComponent;
 import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
 import nl.chromaticvision.sunshine.impl.util.system.FileUtils;
@@ -17,9 +18,17 @@ public class ClickGUI extends GuiScreen {
 
     private static final Minecraft mc = Minecraft.getMinecraft();
     private final ArrayList<CategoryComponent> categoryComponents = new ArrayList<CategoryComponent>();
+    public SettingPanelComponent settingPanelComponent;
+
+    private static ClickGUI instance;
 
     public ClickGUI() {
         load();
+        instance = this;
+    }
+
+    public static ClickGUI getInstance() {
+        return instance == null ? new ClickGUI() : instance;
     }
 
     public void load() {
@@ -27,6 +36,8 @@ public class ClickGUI extends GuiScreen {
         int x = 0;
         int cx = 0;
         int cy = 23;
+
+        settingPanelComponent = new SettingPanelComponent(x + 650, 100, 250, 600);
 
         for (Category category : Category.values()) {
 
@@ -52,7 +63,6 @@ public class ClickGUI extends GuiScreen {
                 categoryComponent.setY(categoryComponent.getY() - 10);
                 categoryComponent.moduleComponents.forEach(moduleComponent -> {
                     moduleComponent.setY(moduleComponent.getY() - 10);
-                    moduleComponent.items.forEach(item -> item.setY(item.getY() - 10));
                 });
             });
         } else if (dWheel > 0) {
@@ -60,7 +70,6 @@ public class ClickGUI extends GuiScreen {
                 categoryComponent.setY(categoryComponent.getY() + 10);
                 categoryComponent.moduleComponents.forEach(moduleComponent -> {
                     moduleComponent.setY(moduleComponent.getY() + 10);
-                    moduleComponent.items.forEach(item -> item.setY(item.getY() + 10));
                 });
             });
         }
@@ -96,11 +105,13 @@ public class ClickGUI extends GuiScreen {
         this.drawDefaultBackground();
 
         categoryComponents.forEach(categoryComponent -> categoryComponent.drawScreen(mouseX, mouseY, partialTicks));
+        settingPanelComponent.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         categoryComponents.forEach(categoryComponent -> categoryComponent.mouseClicked(mouseX, mouseY, mouseButton));
+        settingPanelComponent.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
 

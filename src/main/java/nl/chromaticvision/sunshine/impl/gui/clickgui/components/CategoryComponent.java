@@ -1,4 +1,4 @@
-package nl.chromaticvision.sunshine.impl.gui.clickgui.component;
+package nl.chromaticvision.sunshine.impl.gui.clickgui.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -17,8 +17,6 @@ public class CategoryComponent {
     private int height;
     private boolean open = true;
     private String name;
-    public static int[] counter1 = new int[]{1};
-
 
     private static final Minecraft mc = Minecraft.getMinecraft();
     public ArrayList<ModuleComponent> moduleComponents = new ArrayList<>();
@@ -37,25 +35,7 @@ public class CategoryComponent {
         mc.fontRenderer.drawString(this.getName(), x + 2, y + 5, -1);
 
         if (open) {
-
-            int remainingHeight = 0;
-
-            for (ModuleComponent component : moduleComponents) {
-
-                if (component.isOpen()) {
-                    remainingHeight += component.getTotalItemHeight();
-
-                    component.drawScreen(mouseX, mouseY, partialTicks);
-                    continue;
-                }
-
-                if (remainingHeight > 0) {
-                    component.setY(component.getY() + remainingHeight);
-                    component.drawScreen(mouseX, mouseY, partialTicks);
-                } else {
-                    component.drawScreen(mouseX, mouseY, partialTicks);
-                }
-            }
+            moduleComponents.forEach(moduleComponent -> moduleComponent.drawScreen(mouseX, mouseY, partialTicks));
         }
     }
 
@@ -66,12 +46,8 @@ public class CategoryComponent {
         }
 
         if (ClickGUI.isHovering(mouseX, mouseY, x, y, x + width, y + height) && mouseButton == 1) {
-            onTogglePanelState();
+            open = !open;
         }
-    }
-
-    public void onTogglePanelState() {
-        open = !open;
     }
 
     public int getX() {

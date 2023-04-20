@@ -1,17 +1,13 @@
-package nl.chromaticvision.sunshine.impl.gui.clickgui.component;
+package nl.chromaticvision.sunshine.impl.gui.clickgui.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.init.SoundEvents;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.ClickGUI;
-import nl.chromaticvision.sunshine.impl.gui.clickgui.component.item.SettingItem;
-import nl.chromaticvision.sunshine.impl.gui.clickgui.component.item.items.BooleanButton;
 import nl.chromaticvision.sunshine.impl.module.Module;
-import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class ModuleComponent {
 
@@ -20,12 +16,8 @@ public class ModuleComponent {
     private int y;
     private int width;
     private int height;
-    private boolean open = false;
-
-    public int offsetHeight = 1;
 
     private static final Minecraft mc = Minecraft.getMinecraft();
-    public ArrayList<SettingItem> items = new ArrayList<>();
 
     public ModuleComponent(Module parentModule, int x, int y, int width, int height) {
         this.parentModule = parentModule;
@@ -33,39 +25,11 @@ public class ModuleComponent {
         this.y = y;
         this.width = width;
         this.height = height;
-
-        init();
-    }
-
-    public void init() {
-        if (parentModule.getSettings().size() > 0) {
-
-            int sy = 3;
-
-            for (Setting setting : parentModule.getSettings()) {
-
-                if (!setting.isVisible()) continue;
-
-                if (setting.getValue() instanceof Boolean) {
-
-                    BooleanButton booleanButton = new BooleanButton(setting);
-                    booleanButton.setLocation(x + 1, y + sy);
-
-                    items.add(booleanButton);
-                }
-
-                sy += 16 + offsetHeight;
-            }
-        }
     }
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         Gui.drawRect(x, y, x + width, y + height, parentModule.isEnabled() ? new Color(34, 155, 66).getRGB() : new Color(60, 30, 30).getRGB());
         mc.fontRenderer.drawString(parentModule.getName(), x + 2, y + 5, -1);
-
-        if (open) {
-            items.forEach(item -> item.drawScreen(mouseX, mouseY, partialTicks));
-        }
     }
 
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
@@ -77,26 +41,9 @@ public class ModuleComponent {
             }
 
             if (mouseButton == 1) {
-                open = !open;
+                ClickGUI.getInstance().settingPanelComponent.setCurrentModule(parentModule);
             }
         }
-
-        if (open) {
-            items.forEach(item -> item.mouseClicked(mouseX, mouseY, mouseButton));
-        }
-    }
-
-    public int getTotalItemHeight() {
-
-        if (!open) return 0;
-
-        int i = 3; //offset
-
-        for (SettingItem settingItem : items) {
-            i += settingItem.getHeight() + offsetHeight;
-        }
-
-        return i;
     }
 
     public int getX() {
@@ -107,17 +54,12 @@ public class ModuleComponent {
         return y;
     }
 
-
     public int getWidth() {
         return width;
     }
 
     public int getHeight() {
         return height;
-    }
-
-    public boolean isOpen() {
-        return open;
     }
 
     public void setX(int x) {
@@ -134,10 +76,6 @@ public class ModuleComponent {
 
     public void setHeight(int height) {
         this.height = height;
-    }
-
-    public void setOpen(boolean open) {
-        this.open = open;
     }
 
 }
