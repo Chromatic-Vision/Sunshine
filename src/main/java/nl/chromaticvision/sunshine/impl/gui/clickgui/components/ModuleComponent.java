@@ -42,6 +42,7 @@ public class ModuleComponent {
 
             if (mouseButton == 1) {
                 ClickGUI.getInstance().settingPanelComponent.setCurrentModule(parentModule);
+                ClickGUI.getInstance().settingPanelComponent.updateSettings();
             }
         }
     }

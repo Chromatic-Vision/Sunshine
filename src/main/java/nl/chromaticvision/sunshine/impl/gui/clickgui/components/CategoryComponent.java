@@ -32,7 +32,7 @@ public class CategoryComponent {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 
         Gui.drawRect(x, y, x + width, y + height, new Color(244, 166, 34).getRGB());
-        mc.fontRenderer.drawString(this.getName(), x + 2, y + 5, -1);
+        mc.fontRenderer.drawString(this.getName().substring(0, 1).toUpperCase() + this.getName().substring(1), x + 2, y + 5, -1);
 
         if (open) {
             moduleComponents.forEach(moduleComponent -> moduleComponent.drawScreen(mouseX, mouseY, partialTicks));

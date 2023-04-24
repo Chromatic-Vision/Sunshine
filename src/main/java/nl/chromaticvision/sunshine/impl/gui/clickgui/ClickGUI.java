@@ -61,16 +61,12 @@ public class ClickGUI extends GuiScreen {
         if (dWheel < 0) {
             categoryComponents.forEach(categoryComponent -> {
                 categoryComponent.setY(categoryComponent.getY() - 10);
-                categoryComponent.moduleComponents.forEach(moduleComponent -> {
-                    moduleComponent.setY(moduleComponent.getY() - 10);
-                });
+                categoryComponent.moduleComponents.forEach(moduleComponent -> moduleComponent.setY(moduleComponent.getY() - 10));
             });
         } else if (dWheel > 0) {
             categoryComponents.forEach(categoryComponent -> {
                 categoryComponent.setY(categoryComponent.getY() + 10);
-                categoryComponent.moduleComponents.forEach(moduleComponent -> {
-                    moduleComponent.setY(moduleComponent.getY() + 10);
-                });
+                categoryComponent.moduleComponents.forEach(moduleComponent -> moduleComponent.setY(moduleComponent.getY() + 10));
             });
         }
     }
@@ -113,6 +109,4 @@ public class ClickGUI extends GuiScreen {
         categoryComponents.forEach(categoryComponent -> categoryComponent.mouseClicked(mouseX, mouseY, mouseButton));
         settingPanelComponent.mouseClicked(mouseX, mouseY, mouseButton);
     }
-
-
 }
