@@ -141,7 +141,7 @@ public class FileUtils {
             try {
 
                 //set module settings from json
-                JsonObject jsonObject = (new JsonParser()).parse(new InputStreamReader(Files.newInputStream(path))).getAsJsonObject();
+                JsonObject jsonObject = new JsonParser().parse(new InputStreamReader(Files.newInputStream(path))).getAsJsonObject();
 
                 for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
 

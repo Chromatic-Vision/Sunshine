@@ -8,6 +8,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.event.ClientChatEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.buttons.NumberButton;
 import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
@@ -22,6 +25,13 @@ public class ExampleModule extends Module {
     }
 
     public final Setting<Boolean> silent = register(new Setting<>("Silent", false));
+    public final Setting<Integer> testIntSetting = register(new Setting<>("TestInt", 4, 1, 26));
+    public final Setting<Integer> testIntRSetting = register(new Setting<>("TestIntR", 23, 0, 30));
+    public final Setting<Double> testDoubleSetting = register(new Setting<>("TestDouble", 4.0, 2.2, 14.5));
+    public final Setting<Long> testLongSetting = register(new Setting<>("TestLong", 1250L, 0L, 5000L));
+    public final Setting<Float> testFloatSetting = register(new Setting<>("TestFloat", 4.2f, 0.0f, 14.6f));
+    public final Setting<Short> testShortSetting = register(new Setting<>("TestShort", (short) 6, (short) 0, Short.MAX_VALUE));
+    public final Setting<Byte> testByteSetting = register(new Setting<>("TestByte", (byte) 1, (byte) 0, Byte.MAX_VALUE));
 
     @Override
     public void onEnable() {

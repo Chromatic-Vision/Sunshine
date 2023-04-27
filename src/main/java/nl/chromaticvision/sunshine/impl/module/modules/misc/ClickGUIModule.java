@@ -17,12 +17,15 @@ public class ClickGUIModule extends Module {
         super.onEnable();
 
         mc.displayGuiScreen(new ClickGUI());
-
-        setEnabled(false, false);
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
+    }
+
+    @Override
+    public void onTick() {
+        setEnabled(false, false);
     }
 }

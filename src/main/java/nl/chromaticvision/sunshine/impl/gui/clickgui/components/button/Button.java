@@ -1,7 +1,9 @@
 package nl.chromaticvision.sunshine.impl.gui.clickgui.components.button;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.init.SoundEvents;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.ClickGUI;
 
 public class Button {
@@ -24,6 +26,10 @@ public class Button {
     }
 
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+    }
+
+    public void mouseReleased(int mouseX, int mouseY, int state) {
 
     }
 

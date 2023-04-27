@@ -2,8 +2,9 @@ package nl.chromaticvision.sunshine.impl.gui.clickgui.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.ClickGUI;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.Button;
-import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.buttons.BooleanButton;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.buttons.*;
 import nl.chromaticvision.sunshine.impl.module.Module;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 
@@ -14,8 +15,14 @@ public class SettingPanelComponent {
 
     private int x;
     private int y;
+    private int x2;
+    private int y2;
     private int width;
     private int height;
+    private boolean dragging;
+
+
+    private final int buttonHeight = 18;
 
     private Module currentModule;
     private final Minecraft mc = Minecraft.getMinecraft();
@@ -32,28 +39,39 @@ public class SettingPanelComponent {
 
         buttons.clear();
 
-        if (currentModule.getSettings().isEmpty()) return;
+        if (currentModule.hasSettings()) {
+            for (Setting setting : currentModule.getSettings()) {
 
-        for (Setting setting : currentModule.getSettings()) {
+                if (!setting.isVisible()) continue;
 
-            if (!setting.isVisible()) continue;
+                if (setting.getValue() instanceof Boolean) {
+                    buttons.add(new BooleanButton(setting));
+                    continue;
+                }
 
-            if (setting.getValue() instanceof Boolean) {
-                buttons.add(new BooleanButton(setting));
+                if (setting.isNumberSetting()) {
+                    buttons.add(new NumberButton(setting));
+                    continue;
+                }
             }
         }
     }
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 
-        Gui.drawRect(x, y, x + width, y + height, new Color(70, 70, 70).getRGB());
+        if (dragging) {
+            x = mouseX + x2;
+            y = mouseY + y2;
+        }
+
+        Gui.drawRect(x, y, x + width, y + height, new Color(70, 70, 70).getRGB()); //background
 
         if (currentModule == null) return;
 
-        Gui.drawRect(x, y, x + width, y + 18, new Color(229, 211, 21).getRGB());
-        mc.fontRenderer.drawString(currentModule.getName(), x + 5, y + 5, -1);
+        Gui.drawRect(x, y, x + width, y + buttonHeight, new Color(229, 211, 21).getRGB());
+        mc.fontRenderer.drawString(currentModule.getName(), x + 5, y + 5, -6);
 
-        int sy = y + 18;
+        int sy = y + buttonHeight + 1;
 
         if (buttons.isEmpty()) return;
 
@@ -62,16 +80,31 @@ public class SettingPanelComponent {
             button.setX(x);
             button.setY(sy);
             button.setWidth(width);
-            button.setHeight(18);
+            button.setHeight(buttonHeight);
 
-            sy += 19;
+            sy += buttonHeight + 1;
         }
 
         buttons.forEach(button -> button.drawScreen(mouseX, mouseY, partialTicks));
     }
 
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+
+        if (ClickGUI.isHovering(mouseX, mouseY, x, y, x + width, y + buttonHeight) && mouseButton == 0) {
+
+            x2 = x - mouseX;
+            y2 = y - mouseY;
+
+            dragging = true;
+        }
+
         buttons.forEach(button -> button.mouseClicked(mouseX, mouseY, mouseButton));
+    }
+
+    public void mouseReleased(int mouseX, int mouseY, int state) {
+        if (state == 0) dragging = false;
+
+        buttons.forEach(button -> button.mouseReleased(mouseX, mouseY, state));
     }
 
     public int getX() {

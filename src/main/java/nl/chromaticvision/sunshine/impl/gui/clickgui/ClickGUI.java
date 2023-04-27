@@ -109,4 +109,9 @@ public class ClickGUI extends GuiScreen {
         categoryComponents.forEach(categoryComponent -> categoryComponent.mouseClicked(mouseX, mouseY, mouseButton));
         settingPanelComponent.mouseClicked(mouseX, mouseY, mouseButton);
     }
+
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        settingPanelComponent.mouseReleased(mouseX, mouseY, state);
+    }
 }

@@ -26,9 +26,10 @@ public class BooleanButton extends Button {
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+
         if (isHoveringComponent(mouseX, mouseY) && mouseButton == 0) {
             parentSetting.setValue(!((Boolean) parentSetting.getValue()));
-            mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0f));
         }
     }
 }
