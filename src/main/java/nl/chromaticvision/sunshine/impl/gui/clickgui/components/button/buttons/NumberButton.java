@@ -133,6 +133,8 @@ public class NumberButton extends Button {
             if (value < (byte) min) {
                 value = (byte) min;
             }
+
+            parentSetting.setValue(value);
         }
     }
 }
