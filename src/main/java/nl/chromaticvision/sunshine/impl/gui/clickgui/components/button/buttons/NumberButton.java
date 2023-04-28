@@ -72,7 +72,7 @@ public class NumberButton extends Button {
         } else if (parentSetting.getValue() instanceof Float) {
 
             float result = ((Float) parentSetting.getMin()).floatValue() + (float) this.difference * percent;
-            float value = Float.valueOf((float) Math.round(10.0f * result) / 10.0f);
+            float value = (float) Math.round(10.0f * result) / 10.0f;
 
             if (value > (float) max) {
                 value = (float) max;
@@ -109,6 +109,30 @@ public class NumberButton extends Button {
             }
 
             parentSetting.setValue(value);
+        } else if (parentSetting.getValue() instanceof Short) {
+
+            short value = (short) ((Short) parentSetting.getMin() + (short) ((float) this.difference * percent));
+
+            if (value > (short) max) {
+                value = (short) max;
+            }
+
+            if (value < (short) min) {
+                value = (short) min;
+            }
+
+            parentSetting.setValue(value);
+        } else if (parentSetting.getValue() instanceof Byte) {
+
+            byte value = (byte) ((Byte) parentSetting.getMin() + (byte) ((short) this.difference * percent));
+
+            if (value > (byte) max) {
+                value = (byte) max;
+            }
+
+            if (value < (byte) min) {
+                value = (byte) min;
+            }
         }
     }
 }

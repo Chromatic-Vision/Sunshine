@@ -33,6 +33,10 @@ public class Button {
 
     }
 
+    public void keyTyped(char typedChar, int keyCode) {
+
+    }
+
     public boolean isHoveringComponent(int mouseX, int mouseY) {
         return ClickGUI.isHovering(mouseX, mouseY, x, y, x + width, y + height);
     }

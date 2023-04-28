@@ -51,6 +51,7 @@ public class FileUtils {
     }
 
     public static void saveModuleSettings() {
+
         for (Module module : Main.moduleManager.getModules()) {
 
             JsonObject jsonObject = new JsonObject();
@@ -64,12 +65,21 @@ public class FileUtils {
                     continue;
                 }
 
+                if (setting.isStringSetting()) {
+                    jsonObject.add(setting.getName(), jsonParser.parse(setting.getValueAsString().replace(" ", "<_s>")));
+                    continue;
+                }
+
                 jsonObject.add(setting.getName(), jsonParser.parse(setting.getValue().toString()));
             }
 
             try (FileWriter fileWriter = new FileWriter(config + "/" + module.getName() + ".json")) {
 
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Gson gson = new GsonBuilder()
+                        .setLenient()
+                        .setPrettyPrinting()
+                        .create();
+
                 JsonElement jsonElement = jsonParser.parse(jsonObject.toString());
                 String prettyJsonString = gson.toJson(jsonElement);
 
@@ -173,7 +183,7 @@ public class FileUtils {
                             setting.setValue(element.getAsShort());
                             continue;
                         case "String":
-                            setting.setValue(element.getAsString());
+                            setting.setValue(element.getAsString().replace("<_s>", " "));
                             continue;
                         case "Character":
                             setting.setValue(element.getAsCharacter());

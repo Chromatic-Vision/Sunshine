@@ -19,7 +19,7 @@ public class Module {
     public final Minecraft mc = Minecraft.getMinecraft();
 
     public String name;
-    public String description;
+    public String description = null;
     public Category category;
 
     public boolean enabled;
@@ -34,7 +34,6 @@ public class Module {
 
     public Module(String name, Category category) {
         this.name = name;
-        this.description = "No description found!";
         this.category = category;
     }
 

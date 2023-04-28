@@ -1,13 +1,15 @@
 package nl.chromaticvision.sunshine.impl.gui.clickgui;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import nl.chromaticvision.sunshine.Main;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.components.CategoryComponent;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.components.ModuleComponent;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.components.SettingPanelComponent;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.Button;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.buttons.StringButton;
 import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
+import nl.chromaticvision.sunshine.impl.module.modules.misc.ClickGUIModule;
 import nl.chromaticvision.sunshine.impl.util.system.FileUtils;
 import org.lwjgl.input.Mouse;
 
@@ -16,7 +18,6 @@ import java.util.ArrayList;
 
 public class ClickGUI extends GuiScreen {
 
-    private static final Minecraft mc = Minecraft.getMinecraft();
     private final ArrayList<CategoryComponent> categoryComponents = new ArrayList<CategoryComponent>();
     public SettingPanelComponent settingPanelComponent;
 
@@ -113,5 +114,35 @@ public class ClickGUI extends GuiScreen {
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         settingPanelComponent.mouseReleased(mouseX, mouseY, state);
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+
+        settingPanelComponent.keyTyped(typedChar, keyCode);
+
+        //close gui
+        if (keyCode == 1 || keyCode == Main.moduleManager.getModuleByName("ClickGUI").getKeybind().getKey()) {
+
+            boolean mayClose = true;
+
+            for (Button button : settingPanelComponent.buttons) {
+                if (button instanceof StringButton) {
+                    if (((StringButton) button).isListening()) {
+                        mayClose = false;
+                        break;
+                    }
+                }
+            }
+
+            if (mayClose) {
+
+                mc.displayGuiScreen(null);
+
+                if (mc.currentScreen == null) {
+                    mc.setIngameFocus();
+                }
+            }
+        }
     }
 }

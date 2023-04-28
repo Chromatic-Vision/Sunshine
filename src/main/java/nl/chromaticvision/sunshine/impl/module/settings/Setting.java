@@ -118,11 +118,7 @@ public class Setting <T> {
     }
 
     public boolean isNumberSetting() {
-        return this.value instanceof Double
-                || this.value instanceof Integer
-                || this.value instanceof Short
-                || this.value instanceof Long
-                || this.value instanceof Float;
+        return this.value instanceof Number;
     }
 
     public boolean isEnumSetting() {

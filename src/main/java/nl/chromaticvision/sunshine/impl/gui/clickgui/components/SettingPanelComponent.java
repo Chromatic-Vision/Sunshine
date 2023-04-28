@@ -53,6 +53,20 @@ public class SettingPanelComponent {
                     buttons.add(new NumberButton(setting));
                     continue;
                 }
+
+                if (setting.isStringSetting()) {
+                    buttons.add(new StringButton(setting));
+                    continue;
+                }
+
+                if (setting.getName().equalsIgnoreCase("Keybind")) {
+                    buttons.add(new BindButton(setting));
+                    continue;
+                }
+
+                if (setting.isEnumSetting()) {
+                    buttons.add(new EnumButton(setting));
+                }
             }
         }
     }
@@ -107,6 +121,10 @@ public class SettingPanelComponent {
         buttons.forEach(button -> button.mouseReleased(mouseX, mouseY, state));
     }
 
+    public void keyTyped(char typedChar, int keyCode) {
+        buttons.forEach(button -> button.keyTyped(typedChar, keyCode));
+    }
+
     public int getX() {
         return x;
     }
@@ -146,4 +164,6 @@ public class SettingPanelComponent {
     public void setCurrentModule(Module module) {
         this.currentModule = module;
     }
+
+
 }
