@@ -2,14 +2,18 @@ package nl.chromaticvision.sunshine.impl.gui.clickgui.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import nl.chromaticvision.sunshine.Main;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.ClickGUI;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.Button;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.buttons.*;
 import nl.chromaticvision.sunshine.impl.module.Module;
+import nl.chromaticvision.sunshine.impl.module.ModuleManager;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SettingPanelComponent {
 
@@ -23,7 +27,8 @@ public class SettingPanelComponent {
 
 
     private final int buttonHeight = 18;
-
+    public int hoveringDescriptionTimer = 0;
+    private int buttonOffset = 0;
     private Module currentModule;
     private final Minecraft mc = Minecraft.getMinecraft();
     public ArrayList<Button> buttons = new ArrayList<>();
@@ -71,6 +76,34 @@ public class SettingPanelComponent {
         }
     }
 
+    public String insertNewLine(String str, int limit) {
+        if (str.length() > limit) {
+            StringBuilder stringBuilder = new StringBuilder(str);
+            int index = limit;
+            while (index >= 0 && index < stringBuilder.length()) {
+                if (Character.isWhitespace(stringBuilder.charAt(index))) {
+                    stringBuilder.replace(index, index + 1, "\n");
+                    index += limit;
+                } else {
+                    index--;
+                }
+            }
+            str = stringBuilder.toString();
+        }
+        return str;
+    }
+
+    public List<String> getListOfSplittedStringByWhiteSpace(String string, int limit) {
+
+        if (string.length() > limit) {
+            string = insertNewLine(string, limit);
+        }
+
+        String[] splitStrings = string.split("\n");
+
+        return Arrays.asList(splitStrings);
+    }
+
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 
         if (dragging) {
@@ -82,10 +115,52 @@ public class SettingPanelComponent {
 
         if (currentModule == null) return;
 
-        Gui.drawRect(x, y, x + width, y + buttonHeight, new Color(229, 211, 21).getRGB());
-        mc.fontRenderer.drawString(currentModule.getName(), x + 5, y + 5, -6);
+        Gui.drawRect(x, y, x + width, y + buttonHeight, new Color(222, 182, 14).getRGB());
+        mc.fontRenderer.drawString(currentModule.getName(), x + 5, y + 6, -6);
 
-        int sy = y + buttonHeight + 1;
+        if (currentModule.getDescription() != null) { // draw description
+
+            int bx = x + width - 16;
+            int by = y + 3;
+            int bwidth = 12;
+            int bheight = 12;
+
+            Gui.drawRect(bx, by, bx + bwidth, by + bheight, new Color(90, 117, 173).getRGB());
+            mc.fontRenderer.drawString("?", bx + 3, by + 2, -1, true);
+
+            if (ClickGUI.isHovering(mouseX, mouseY, bx, by, bx + bwidth, by + bheight)) {
+                hoveringDescriptionTimer++;
+            } else {
+                hoveringDescriptionTimer = 0;
+            }
+
+            if (hoveringDescriptionTimer >= 30) {
+
+                List<String> descriptions = new ArrayList<>();
+
+                if (mc.fontRenderer.getStringWidth(currentModule.getDescription()) - 5 > width) {
+                    descriptions = getListOfSplittedStringByWhiteSpace(currentModule.getDescription(), 47);
+                } else {
+                    descriptions.add(currentModule.getDescription());
+                }
+                
+                int sy = y + 25;
+
+                for (String description : descriptions) {
+                    mc.fontRenderer.drawString(description, x + 5, sy, -1);
+                    sy += mc.fontRenderer.FONT_HEIGHT + 1;
+                }
+
+                while (buttonOffset < descriptions.size() * (mc.fontRenderer.FONT_HEIGHT + 1) + 10) {
+                    buttonOffset += 1;
+                }
+                
+            } else {
+                buttonOffset = 0;
+            }
+        }
+
+        int sy = y + buttonHeight + buttonOffset + 1;
 
         if (buttons.isEmpty()) return;
 

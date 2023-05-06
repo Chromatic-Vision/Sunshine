@@ -8,6 +8,7 @@ import nl.chromaticvision.sunshine.impl.gui.clickgui.ClickGUI;
 import nl.chromaticvision.sunshine.impl.module.Module;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class ModuleComponent {
 
@@ -32,6 +33,7 @@ public class ModuleComponent {
         mc.fontRenderer.drawString(parentModule.getName(), x + 2, y + 5, -1);
 
         if (parentModule.getSettings().size() > 1) mc.fontRenderer.drawString("+", x + width - 10, y + 5, -1);
+
     }
 
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {

@@ -1,6 +1,5 @@
 package nl.chromaticvision.sunshine.impl.module;
 
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -13,9 +12,9 @@ import nl.chromaticvision.sunshine.impl.module.modules.misc.ExampleModule;
 import nl.chromaticvision.sunshine.impl.module.modules.movement.AutoJump;
 import nl.chromaticvision.sunshine.impl.module.modules.movement.Fly;
 import nl.chromaticvision.sunshine.impl.module.modules.movement.LongJump;
+import nl.chromaticvision.sunshine.impl.module.modules.render.ShulkerPreview;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class ModuleManager {
@@ -32,6 +31,8 @@ public class ModuleManager {
         modules.add(new Fly());
         modules.add(new LongJump());
         modules.add(new AutoJump());
+
+        modules.add(new ShulkerPreview());
     }
 
     @SubscribeEvent
@@ -57,13 +58,14 @@ public class ModuleManager {
 
     @SubscribeEvent
     public void onRenderOverlay(RenderGameOverlayEvent event) {
+
+        if (event.getType() != RenderGameOverlayEvent.ElementType.TEXT) return;
+
         modules.stream()
                 .filter(Module::isEnabled)
                 .forEach(Module::onRenderOverlay);
 
-        if (event.getType() == RenderGameOverlayEvent.ElementType.TEXT) {
-            Minecraft.getMinecraft().fontRenderer.drawString("Sunshine!!", 2, 5, new Color(255, 228, 23).getRGB());
-        }
+        //Minecraft.getMinecraft().fontRenderer.drawString("Sunshine!!", 2, 5, new Color(255, 228, 23).getRGB());
     }
 
     @SubscribeEvent

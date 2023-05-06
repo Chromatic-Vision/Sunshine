@@ -97,8 +97,26 @@ public class Module {
         }
     }
 
+    public void trySetEnabledWithNoToggle(boolean enabled) {
+        try {
+            if (enabled) {
+                enable();
+            } else {
+                disable();
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+
+            this.enabled = enabled;
+        }
+    }
+
     public boolean isEnabled() {
         return this.enabled;
+    }
+
+    public boolean isDisabled() {
+        return !this.enabled;
     }
 
     public String getName() {
@@ -107,6 +125,14 @@ public class Module {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Bind getKeybind() {

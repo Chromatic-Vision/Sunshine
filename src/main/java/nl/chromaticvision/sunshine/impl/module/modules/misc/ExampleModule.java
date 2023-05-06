@@ -29,7 +29,7 @@ public class ExampleModule extends Module {
 
     private enum TestEnumzz {
         TEST,
-        KAAZ,
+        KAAS,
         CHROMATICVISION;
     }
 

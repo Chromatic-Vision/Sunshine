@@ -1,6 +1,7 @@
 package nl.chromaticvision.sunshine.impl.util.system;
 
 import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
 import nl.chromaticvision.sunshine.Main;
 import nl.chromaticvision.sunshine.impl.module.Module;
 import nl.chromaticvision.sunshine.impl.module.settings.Bind;
@@ -30,7 +31,7 @@ public class FileUtils {
     }
 
     public static void saveActiveModuleConfig()  {
-        File file = new File(sunshine + "/activemodules.stc");
+        File file = new File(sunshine + "/activemodules.txt");
 
         try {
             if (!file.exists()) file.createNewFile();
@@ -41,7 +42,7 @@ public class FileUtils {
         try (FileWriter fileWriter = new FileWriter(file)) {
 
             for (Module module : Main.moduleManager.getModules()) {
-                fileWriter.write(module.getName() + ">" + module.isEnabled() + "\n");
+                fileWriter.write(module.getName() + "=" + module.isEnabled() + "\n");
             }
 
             fileWriter.flush();
@@ -66,7 +67,7 @@ public class FileUtils {
                 }
 
                 if (setting.isStringSetting()) {
-                    jsonObject.add(setting.getName(), jsonParser.parse(setting.getValueAsString().replace(" ", "<_s>")));
+                    jsonObject.add(setting.getName(), jsonParser.parse(setting.getValueAsString().replace(" ", "__s__")));
                     continue;
                 }
 
@@ -85,8 +86,8 @@ public class FileUtils {
 
                 fileWriter.write(prettyJsonString);
                 fileWriter.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
         }
     }
@@ -112,7 +113,7 @@ public class FileUtils {
     }
 
     public static void loadActiveModuleConfig() {
-        File file = new File(sunshine + "/activemodules.stc");
+        File file = new File(sunshine + "/activemodules.txt");
 
         try {
 
@@ -126,12 +127,12 @@ public class FileUtils {
 
             for (String line : lines) {
 
-                String[] regex = line.split(">");
+                String[] regex = line.split("=");
                 Module module = Main.moduleManager.getModuleByName(regex[0]);
 
                 if (module == null) continue;
 
-                module.setEnabled(Boolean.parseBoolean(regex[1]), false);
+                module.trySetEnabledWithNoToggle(Boolean.parseBoolean(regex[1]));
             }
 
             scanner.close();
@@ -183,7 +184,7 @@ public class FileUtils {
                             setting.setValue(element.getAsShort());
                             continue;
                         case "String":
-                            setting.setValue(element.getAsString().replace("<_s>", " "));
+                            setting.setValue(element.getAsString().replace("__s__", " "));
                             continue;
                         case "Character":
                             setting.setValue(element.getAsCharacter());
