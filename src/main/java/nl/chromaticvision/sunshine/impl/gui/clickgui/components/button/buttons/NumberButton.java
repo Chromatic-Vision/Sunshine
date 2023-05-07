@@ -71,7 +71,7 @@ public class NumberButton extends Button {
             parentSetting.setValue(value);
         } else if (parentSetting.getValue() instanceof Float) {
 
-            float result = ((Float) parentSetting.getMin()).floatValue() + (float) this.difference * percent;
+            float result = (Float) parentSetting.getMin() + (float) this.difference * percent;
             float value = (float) Math.round(10.0f * result) / 10.0f;
 
             if (value > (float) max) {

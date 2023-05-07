@@ -13,7 +13,6 @@ public class StringButton extends Button {
     public Setting parentSetting;
     private String input = "";
     private boolean listening = false;
-    private int currentSeconds;
 
     public StringButton(Setting parentSetting) {
         super(parentSetting.getName());
@@ -24,7 +23,7 @@ public class StringButton extends Button {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 
-        currentSeconds = Calendar.getInstance().get(Calendar.SECOND);
+        int currentSeconds = Calendar.getInstance().get(Calendar.SECOND);
 
         Gui.drawRect(x, y, x + width, y + height, listening ? new Color(123, 155, 131).getRGB() : new Color(80, 134, 101).getRGB());
         fr.drawString(listening ? ("Listening... > " + input + (currentSeconds % 2 == 0 ? "_" : "")) : (this.getName() + " > " + parentSetting.getValueAsString()), x + 5, y + 6, -1);

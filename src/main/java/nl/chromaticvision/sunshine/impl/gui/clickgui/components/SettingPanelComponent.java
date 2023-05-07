@@ -151,12 +151,10 @@ public class SettingPanelComponent {
                     sy += mc.fontRenderer.FONT_HEIGHT + 1;
                 }
 
-                while (buttonOffset < descriptions.size() * (mc.fontRenderer.FONT_HEIGHT + 1) + 10) {
-                    buttonOffset += 1;
-                }
-                
+                if (buttonOffset < descriptions.size() * (mc.fontRenderer.FONT_HEIGHT + 1) + 10) buttonOffset += 1;
+
             } else {
-                buttonOffset = 0;
+                if (buttonOffset > 0) buttonOffset -= 1;
             }
         }
 

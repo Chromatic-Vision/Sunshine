@@ -29,15 +29,14 @@ public class ExampleModule extends Module {
 
     private enum TestEnumzz {
         TEST,
-        KAAS,
-        CHROMATICVISION;
+        KAASHOOFD;
     }
 
     public final Setting<Boolean> silent = register(new Setting<>("Silent", false));
-    public final Setting<Integer> testIntSetting = register(new Setting<>("TestInt", 4, 1, 26));;
+    public final Setting<Integer> testIntSetting = register(new Setting<>("TestInt", 4, 1, 26));
     public final Setting<Double> testDoubleSetting = register(new Setting<>("TestDouble", 4.0, 2.2, 14.5));
     public final Setting<Long> testLongSetting = register(new Setting<>("TestLong", 1250L, 0L, 5000L));
-    public final Setting<Float> testFloatSetting = register(new Setting<>("TestFloat", 4.2f, 0.0f, 14.6f));
+    public final Setting<Float> testFloatSetting = register(new Setting<>("TestFloat", 0.15f, 0.0f, 2.0f));
     public final Setting<Short> testShortSetting = register(new Setting<>("TestShort", (short) 6, (short) 0, Short.MAX_VALUE));
     public final Setting<Byte> testByteSetting = register(new Setting<>("TestByte", (byte) 1, (byte) 0, Byte.MAX_VALUE));
     public final Setting<String> testString = register(new Setting<>("TestString", "Hello, world!"));

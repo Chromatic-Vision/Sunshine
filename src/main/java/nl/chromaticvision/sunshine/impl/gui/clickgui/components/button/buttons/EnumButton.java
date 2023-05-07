@@ -18,7 +18,16 @@ public class EnumButton extends Button {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        Gui.drawRect(x, y, x + width, y + height, new Color(80, 134, 101).getRGB());
+
+        float current = ((Number) parentSetting.getEnum(parentSetting.currentEnumName())).floatValue();
+        int length = ((Enum) parentSetting.getValue()).getClass().getEnumConstants().length - 1;
+
+        if (length <= 0) {
+            System.err.println("Who tf uses only one enum?????");
+            return;
+        }
+
+        Gui.drawRect(x, y, x + ((int) ((current / length) * width)), y + height, new Color(80, 134, 101).getRGB());
         fr.drawString(parentSetting.getName() + " > " + parentSetting.currentEnumName(), x + 5, y + 6, -1);
     }
 
