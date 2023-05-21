@@ -13,7 +13,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import nl.chromaticvision.sunshine.api.toast.CustomToast;
-import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.buttons.NumberButton;
 import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;

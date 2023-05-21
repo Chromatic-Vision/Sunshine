@@ -59,9 +59,6 @@ public class BlockUtils {
             return;
         }
 
-        // BlockPos neighbour = pos.offset(side);
-        // EnumFacing opposite = side.getOpposite();
-
         Vec3d hitVec = new Vec3d(blockPos.offset(side))
                 .add((new Vec3d(0.5, 0.5, 0.5))
                         .add(new Vec3d(side.getOpposite().getDirectionVec())
