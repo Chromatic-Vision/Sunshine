@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.ClickGUIModule;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.ExampleModule;
+import nl.chromaticvision.sunshine.impl.module.modules.misc.ShulkerHopper;
 import nl.chromaticvision.sunshine.impl.module.modules.movement.AutoJump;
 import nl.chromaticvision.sunshine.impl.module.modules.movement.Fly;
 import nl.chromaticvision.sunshine.impl.module.modules.movement.LongJump;
@@ -33,6 +34,7 @@ public class ModuleManager {
         modules.add(new AutoJump());
 
         modules.add(new ShulkerPreview());
+        modules.add(new ShulkerHopper());
     }
 
     @SubscribeEvent

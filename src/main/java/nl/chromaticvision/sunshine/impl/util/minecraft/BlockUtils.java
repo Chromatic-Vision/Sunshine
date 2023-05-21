@@ -1,0 +1,87 @@
+package nl.chromaticvision.sunshine.impl.util.minecraft;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.play.client.CPacketEntityAction;
+import net.minecraft.network.play.client.CPacketHeldItemChange;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+
+public class BlockUtils {
+
+    private static final Minecraft mc = Minecraft.getMinecraft();
+
+    public static boolean isEmptyBlock(BlockPos blockPos) {
+        return mc.world.getBlockState(blockPos).getBlock() instanceof BlockAir
+                || mc.world.getBlockState(blockPos).getBlock() instanceof BlockLiquid;
+    }
+
+    public static boolean validToPlace(BlockPos blockPos) {
+        for (EnumFacing facing : EnumFacing.values()) {
+            if (mc.world.getBlockState(blockPos.offset(facing)).getMaterial().isSolid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean collideWith(BlockPos blockPos, Block block) {
+        for (EnumFacing facing : EnumFacing.values()) {
+            if (mc.world.getBlockState(blockPos.offset(facing)).getBlock() == block) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static EnumFacing getPlaceableSide(BlockPos blockPos) {
+        for (EnumFacing facing : EnumFacing.values()) {
+            if (!isEmptyBlock(blockPos.offset(facing))) {
+                return facing;
+            }
+        }
+        return null;
+    }
+
+    public static void placeBlock(BlockPos blockPos) {
+
+        if (mc.player == null || mc.world == null) return;
+
+        EnumFacing side = BlockUtils.getPlaceableSide(blockPos);
+
+        if (side == null) {
+            return;
+        }
+
+        // BlockPos neighbour = pos.offset(side);
+        // EnumFacing opposite = side.getOpposite();
+
+        Vec3d hitVec = new Vec3d(blockPos.offset(side))
+                .add((new Vec3d(0.5, 0.5, 0.5))
+                        .add(new Vec3d(side.getOpposite().getDirectionVec())
+                                .scale(0.5)));
+
+        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
+        mc.playerController.processRightClickBlock(mc.player, mc.world, blockPos.offset(side), side.getOpposite(), hitVec, EnumHand.MAIN_HAND);
+        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
+        mc.player.connection.sendPacket(new CPacketHeldItemChange(mc.player.inventory.currentItem));
+        mc.player.swingArm(EnumHand.MAIN_HAND);
+    }
+
+    public static void clickBlock(BlockPos blockPos, EnumHand hand) {
+        mc.playerController.processRightClickBlock(mc.player,
+                mc.world,
+                blockPos,
+                EnumFacing.getDirectionFromEntityLiving(blockPos, mc.player),
+                new Vec3d(blockPos.getX(), blockPos.getY(), blockPos.getZ()),
+                hand
+        );
+        mc.player.swingArm(hand);
+    }
+}
