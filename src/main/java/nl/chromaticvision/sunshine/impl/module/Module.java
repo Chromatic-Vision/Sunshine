@@ -173,4 +173,8 @@ public class Module {
     public void onRenderOverlay() {}
     public void onWorldRender() {}
 
+    public boolean safeToUpdate() {
+        return mc.player != null && mc.world != null;
+    }
+
 }

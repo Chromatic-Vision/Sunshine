@@ -1,30 +1,35 @@
 package nl.chromaticvision.sunshine.impl.gui.shulkerpreview;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import nl.chromaticvision.sunshine.Reference;
+import nl.chromaticvision.sunshine.impl.util.minecraft.RenderUtils;
+
+import java.awt.*;
+import java.util.Objects;
 
 public class GuiShulkerPreview extends GuiContainer {
 
     private final ItemStack parentShulkerStack;
     public static boolean renderingTooltip;
     public static boolean isMouseInsideGui;
+    public final ResourceLocation SHULKER_GUI_TEXTURE = new ResourceLocation("textures/gui/container/shulker_box.png");
+
     private int x;
     private int y;
+    private boolean colorShulker;
 
-    public GuiShulkerPreview(Container inventorySlotsIn, ItemStack parentShulkerStack) {
+    public GuiShulkerPreview(Container inventorySlotsIn, ItemStack parentShulkerStack, boolean colorShulker) {
         super(inventorySlotsIn);
 
         this.parentShulkerStack = parentShulkerStack;
+        this.colorShulker = colorShulker;
         this.mc = Minecraft.getMinecraft();
         this.fontRenderer = mc.fontRenderer;
         this.width = mc.displayWidth;
@@ -47,40 +52,90 @@ public class GuiShulkerPreview extends GuiContainer {
         this.y = y;
     }
 
+    public Color getShulkerColorRGB(ItemStack shulkerStack) {
+
+        String shulkerColor = Objects.requireNonNull(shulkerStack.getItem().getRegistryName())
+                .toString()
+                .replace("minecraft:", "")
+                .replace("_shulker_box", "");
+
+        switch (shulkerColor) {
+            case "red":
+                return new Color(156, 37, 34);
+            case "orange":
+                return new Color(245, 116, 16);
+            case "yellow":
+                return new Color(252, 199, 36);
+            case "lime":
+                return new Color(113, 188, 24);
+            case "green":
+                return new Color(84, 109, 28);
+            case "cyan":
+                return new Color(22, 135, 146);
+            case "light_blue":
+                return new Color(60, 182, 220);
+            case "blue":
+                return new Color(51, 53, 155);
+            case "purple":
+                return new Color(151, 105, 151);
+            case "pink":
+                return new Color(243, 139, 170);
+            case "magenta":
+                return new Color(185, 62, 174);
+            case "brown":
+                return new Color(114, 71, 40);
+            case "black":
+                return new Color(31, 31, 35);
+            case "gray":
+                return new Color(61, 66, 69);
+            case "silver":
+                return new Color(140, 140, 131);
+            default:
+                return new Color(255, 255, 255);
+        }
+    }
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 
         if (parentShulkerStack == null || !(parentShulkerStack.getItem() instanceof ItemShulkerBox)) return;
 
         GlStateManager.disableRescaleNormal();
+        RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
 
-        RenderHelper.disableStandardItemLighting();
+        mc.getRenderItem().zLevel = 500.1f;
 
-        GlStateManager.color(1f, 1f, 1f, 1f);
+        float red = getShulkerColorRGB(parentShulkerStack).getRed() / 255f;
+        float green = getShulkerColorRGB(parentShulkerStack).getGreen() / 255f;
+        float blue = getShulkerColorRGB(parentShulkerStack).getBlue() / 255f;
 
-        mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID, "images/shulker_box_top.png"));
+        GlStateManager.color(colorShulker ? red : 1f, colorShulker ? green : 1f, colorShulker ? blue : 1f, 1f);
 
-        Gui.drawModalRectWithCustomSizedTexture(x + 8,
-                y - 97,
-                0,
-                0,
-                256,
-                256,
-                256,
-                256
-        );
+        GlStateManager.enableTexture2D();
 
         GlStateManager.enableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(
+                GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO
+        );
+
+        mc.getTextureManager().bindTexture(SHULKER_GUI_TEXTURE);
+
+        int fx = x + 8;
+        int fy = y - 97;
+
+        RenderUtils.drawTexturedRect(fx, fy + 6, 0, 0, 176, 10, 500); //top
+        RenderUtils.drawTexturedRect(fx, fy + 16, 0, 16, 176, 58, 500); //middle
+        RenderUtils.drawTexturedRect(fx, fy + 16 + 58, 0, 160, 176, 8, 500); //bottom
+
         GlStateManager.enableDepth();
-
         GlStateManager.enableLighting();
+        GlStateManager.enableRescaleNormal();
         RenderHelper.enableGUIStandardItemLighting();
-
-        mc.getRenderItem().zLevel = 300.1f;
 
         Slot hoveringSlot = null;
 
@@ -118,12 +173,11 @@ public class GuiShulkerPreview extends GuiContainer {
 
         mc.getRenderItem().zLevel = 0f;
 
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.enableRescaleNormal();
-
         if (hoveringSlot != null && hoveringSlot.getStack() != ItemStack.EMPTY) {
 
-            GlStateManager.colorMask(true, true, true, false);
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+
             this.drawGradientRect(
                     ix + hoveringSlot.xPos,
                     iy + hoveringSlot.yPos,
@@ -132,23 +186,24 @@ public class GuiShulkerPreview extends GuiContainer {
                     -2130706433,
                     -2130706433
             );
-            GlStateManager.colorMask(true, true, true, true);
 
             renderingTooltip = true;
             this.renderToolTip(hoveringSlot.getStack(), mouseX, mouseY);
             renderingTooltip = false;
 
+            GlStateManager.enableDepth();
         }
 
         GlStateManager.disableBlend();
+        GlStateManager.disableLighting();
 
         isMouseInsideGui = this.isPointInRegion(x + 11,
                 y - 88,
                 x + 181,
-                y + 77,
+                y - 240,
                 mouseX,
                 mouseY
-        );
+        ); // ???
     }
 
     @Override

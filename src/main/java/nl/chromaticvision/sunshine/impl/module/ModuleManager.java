@@ -8,11 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.ClickGUIModule;
-import nl.chromaticvision.sunshine.impl.module.modules.misc.ExampleModule;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.ShulkerHopper;
-import nl.chromaticvision.sunshine.impl.module.modules.movement.AutoJump;
-import nl.chromaticvision.sunshine.impl.module.modules.movement.Fly;
-import nl.chromaticvision.sunshine.impl.module.modules.movement.LongJump;
 import nl.chromaticvision.sunshine.impl.module.modules.render.ShulkerPreview;
 import org.lwjgl.input.Keyboard;
 
@@ -26,12 +22,7 @@ public class ModuleManager {
         MinecraftForge.EVENT_BUS.register(this);
         modules = new ArrayList<>();
 
-        modules.add(new ExampleModule());
         modules.add(new ClickGUIModule());
-
-        modules.add(new Fly());
-        modules.add(new LongJump());
-        modules.add(new AutoJump());
 
         modules.add(new ShulkerPreview());
         modules.add(new ShulkerHopper());
@@ -41,6 +32,7 @@ public class ModuleManager {
     public void onTick(TickEvent.ClientTickEvent event) {
         modules.stream()
                 .filter(Module::isEnabled)
+                .filter(Module::safeToUpdate)
                 .forEach(Module::onTick);
     }
 
@@ -55,6 +47,7 @@ public class ModuleManager {
     public void onLiving(LivingEvent.LivingUpdateEvent event) {
         modules.stream()
                 .filter(Module::isEnabled)
+                .filter(Module::safeToUpdate)
                 .forEach(Module::onLiving);
     }
 

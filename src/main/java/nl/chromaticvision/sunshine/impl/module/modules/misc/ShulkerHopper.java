@@ -38,7 +38,7 @@ public class ShulkerHopper extends Module {
     }
 
 
-    public final Setting<DetectMode> detectShulkerContent = register(new Setting<>("DetectShulkerContent", DetectMode.SUPERWEAPON));
+    public final Setting<DetectMode> detectShulkerContent = register(new Setting<>("DetectShulkerContent", DetectMode.BED));
     public final Setting<Boolean> blockShulker = register(new Setting<>("BlockShulker", false));
     public final Setting<Boolean> placeSilent = register(new Setting<>("PlaceSilent", false));
     public final Setting<Integer> itemLimitCount = register(new Setting<>("ItemLimitCount", 3, 0, 10));
@@ -94,9 +94,7 @@ public class ShulkerHopper extends Module {
                         }
                     }
 
-                }
-
-                if (detectShulkerContent.getValue() == DetectMode.SUPERWEAPON) {
+                } else if (detectShulkerContent.getValue() == DetectMode.SUPERWEAPON) {
 
                     for (ItemStack content : InventoryUtils.getShulkerContents(slotStack)) {
                         if (InventoryUtils.isOverEnchantedItem(content)) {
@@ -118,8 +116,6 @@ public class ShulkerHopper extends Module {
 
     @Override
     public void onTick() {
-
-        if (mc.player == null || mc.world == null) return;
 
         if (phase == 0) {
 

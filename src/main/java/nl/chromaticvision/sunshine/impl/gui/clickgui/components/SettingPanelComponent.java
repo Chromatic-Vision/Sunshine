@@ -2,12 +2,11 @@ package nl.chromaticvision.sunshine.impl.gui.clickgui.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import nl.chromaticvision.sunshine.Main;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.ClickGUI;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.Button;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.buttons.*;
 import nl.chromaticvision.sunshine.impl.module.Module;
-import nl.chromaticvision.sunshine.impl.module.ModuleManager;
+import nl.chromaticvision.sunshine.impl.module.settings.Bind;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 
 import java.awt.*;
@@ -64,7 +63,7 @@ public class SettingPanelComponent {
                     continue;
                 }
 
-                if (setting.getName().equalsIgnoreCase("Keybind")) {
+                if (setting.getValue() instanceof Bind) {
                     buttons.add(new BindButton(setting));
                     continue;
                 }
@@ -154,7 +153,7 @@ public class SettingPanelComponent {
                 if (buttonOffset < descriptions.size() * (mc.fontRenderer.FONT_HEIGHT + 1) + 10) buttonOffset += 1;
 
             } else {
-                if (buttonOffset > 0) buttonOffset -= 1;
+                if (buttonOffset > 0) buttonOffset--;
             }
         }
 

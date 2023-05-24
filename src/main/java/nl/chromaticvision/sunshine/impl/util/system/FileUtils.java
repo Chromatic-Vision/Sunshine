@@ -31,7 +31,7 @@ public class FileUtils {
     }
 
     public static void saveActiveModuleConfig()  {
-        File file = new File(sunshine + "/activemodules.txt");
+        File file = new File(sunshine + "/activemodules.properties");
 
         try {
             if (!file.exists()) file.createNewFile();
@@ -113,7 +113,7 @@ public class FileUtils {
     }
 
     public static void loadActiveModuleConfig() {
-        File file = new File(sunshine + "/activemodules.txt");
+        File file = new File(sunshine + "/activemodules.properties");
 
         try {
 

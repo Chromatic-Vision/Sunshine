@@ -11,6 +11,8 @@ import nl.chromaticvision.sunshine.impl.gui.shulkerpreview.GuiShulkerPreview;
 import nl.chromaticvision.sunshine.impl.gui.shulkerpreview.ShulkerContainer;
 import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
+import nl.chromaticvision.sunshine.impl.module.settings.Bind;
+import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 import nl.chromaticvision.sunshine.impl.util.minecraft.InventoryUtils;
 import org.lwjgl.input.Keyboard;
 
@@ -23,10 +25,14 @@ public class ShulkerPreview extends Module {
 
     public ShulkerPreview() {
         super("ShulkerPreview",
-                "Allows you to preview the content of shulker boxes and containers",
+                "Allows you to preview the content of shulker boxes in the containers. Hold the key you've bound to preview the shulker box.",
                 Category.RENDER
         );
     }
+
+    public final Setting<Bind> viewShulker = register(new Setting<>("ViewShulker", new Bind(Keyboard.KEY_V)));
+    public final Setting<Boolean> color = register(new Setting<>("ColorShulker", true));
+
 
     @Override
     public void onEnable() {
@@ -41,10 +47,7 @@ public class ShulkerPreview extends Module {
     @SubscribeEvent
     public void onKeyPress(GuiScreenEvent.KeyboardInputEvent event) {
         if (this.isEnabled()) {
-
-            //push = true;
-
-            if (Keyboard.getEventKey() == Keyboard.KEY_V) {
+            if (Keyboard.getEventKey() == viewShulker.getValue().getKey()) {
                 inShulker = Keyboard.getEventKeyState();
             } else {
                 inShulker = false;
@@ -67,12 +70,10 @@ public class ShulkerPreview extends Module {
         Slot hoveringSlot = ((GuiContainer) event.getGui()).getSlotUnderMouse();
 
         if (inShulker) {
-
             if (lastHoveredShulkerStack == null || !(lastHoveredShulkerStack.getItem() instanceof ItemShulkerBox)) {
                 inShulker = false;
                 return;
             }
-
         } else {
 
             lastX = event.getMouseX();
@@ -84,16 +85,15 @@ public class ShulkerPreview extends Module {
             }
 
             lastHoveredShulkerStack = hoveringSlot.getStack().getItem() instanceof ItemShulkerBox ? hoveringSlot.getStack() : null;
-
         }
 
         if (lastHoveredShulkerStack != null && lastHoveredShulkerStack != ItemStack.EMPTY) {
 
             GuiShulkerPreview currentGui = new GuiShulkerPreview(
-                    new ShulkerContainer(
-                            new ShulkerContainer.ShulkerInventory(
-                                    InventoryUtils.getShulkerContents(lastHoveredShulkerStack))),
-                    lastHoveredShulkerStack);
+                    new ShulkerContainer(new ShulkerContainer.ShulkerInventory(InventoryUtils.getShulkerContents(lastHoveredShulkerStack))),
+                    lastHoveredShulkerStack,
+                    color.getValue()
+            );
 
             currentGui.setX(lastX);
             currentGui.setY(lastY);

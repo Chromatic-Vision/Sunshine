@@ -8,8 +8,8 @@ import org.lwjgl.input.Keyboard;
 public class ClickGUIModule extends Module {
 
     public ClickGUIModule() {
-        super("ClickGUI", "display's gui.", Category.MISC);
-        setKeybind(Keyboard.KEY_C);
+        super("ClickGUI", "Displays setting gui of this client.", Category.MISC);
+        setKeybind(Keyboard.KEY_0);
     }
 
     @Override
