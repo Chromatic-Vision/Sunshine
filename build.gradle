@@ -107,7 +107,6 @@ jar {
                 'TweakOrder': 0,
                 'FMLCorePluginContainsFMLMod': 'true',
                 'FMLCorePlugin': 'nl.chromaticvision.sunshine.mixin.MixinLoader',
-                'ForceLoadAsMod': true,
                 'FMLAT': 'sunshine_at.cfg'
         )
     }

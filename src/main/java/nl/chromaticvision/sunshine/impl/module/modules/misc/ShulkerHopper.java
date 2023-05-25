@@ -67,7 +67,7 @@ public class ShulkerHopper extends Module {
         block = -1;
 
         //item checks
-        for (int i = 8; i > -1; i--) {
+        for (int i = 8; i >= 0; i--) {
 
             ItemStack slotStack = mc.player.inventory.getStackInSlot(i);
 
