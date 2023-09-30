@@ -11,7 +11,7 @@ public class SilentPearl extends Module {
 
     public SilentPearl() {
         super("SilentPearl",
-                "Allows you to throw automatically an ender pearl from your hotbar",
+                "Allows you to throw automatically an ender pearl from your hotbar on enable",
                 Category.MISC
         );
     }

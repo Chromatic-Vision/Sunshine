@@ -10,6 +10,7 @@ import nl.chromaticvision.sunshine.Reference;
 import nl.chromaticvision.sunshine.api.toast.CustomToast;
 import nl.chromaticvision.sunshine.impl.module.settings.Bind;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
+import nl.chromaticvision.sunshine.impl.util.minecraft.MessageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,21 +47,21 @@ public class Module {
     public void onEnable() {
         MinecraftForge.EVENT_BUS.register(this);
 
-        mc.getToastGui().add(new CustomToast(Reference.NAME,
+        MessageUtils.addCustomAdvancementTypeToast(Reference.NAME,
                 TextFormatting.RESET + this.getName() + TextFormatting.GREEN + " enabled.",
                 new ItemStack(Item.getItemFromBlock(Blocks.CONCRETE), 1, 13),
                 3000L
-        ));
+        );
     }
 
     public void onDisable() {
         MinecraftForge.EVENT_BUS.unregister(this);
 
-        mc.getToastGui().add(new CustomToast(Reference.NAME,
+        MessageUtils.addCustomAdvancementTypeToast(Reference.NAME,
                 TextFormatting.RESET + this.getName() + TextFormatting.RED + " disabled.",
                 new ItemStack(Item.getItemFromBlock(Blocks.CONCRETE), 1, 14),
                 3000L
-        ));
+        );
     }
 
     public void enable() {

@@ -15,6 +15,7 @@ import nl.chromaticvision.sunshine.impl.module.Module;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 import nl.chromaticvision.sunshine.impl.util.minecraft.BlockUtils;
 import nl.chromaticvision.sunshine.impl.util.minecraft.InventoryUtils;
+import nl.chromaticvision.sunshine.impl.util.minecraft.MessageUtils;
 
 public class ShulkerHopper extends Module {
 
@@ -120,7 +121,8 @@ public class ShulkerHopper extends Module {
         if (phase == 0) {
 
             if (hopper == -1 || shulker == -1) {
-                mc.player.sendMessage(new TextComponentString("Not enough materials."));
+                MessageUtils.sendClientChatMessage("Missing " + (hopper == -1 && shulker == -1 ? "hopper and shulker box" : (hopper == -1 ? "hopper" : "shulker box")) + "!");
+                MessageUtils.addNotificationToast("Hi", "no shulkers?????????");
                 disable();
                 return;
             }
