@@ -12,6 +12,7 @@ import nl.chromaticvision.sunshine.impl.module.modules.misc.ClickGUIModule;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.SilentPearl;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.ShulkerHopper;
 import nl.chromaticvision.sunshine.impl.module.modules.render.ShulkerPreview;
+import nl.chromaticvision.sunshine.impl.module.modules.shulkerpvp.Aura32k;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -34,6 +35,9 @@ public class ModuleManager {
 
         //exploit
         modules.add(new AnvilSwap());
+
+        //32k
+        modules.add(new Aura32k());
     }
 
     @SubscribeEvent

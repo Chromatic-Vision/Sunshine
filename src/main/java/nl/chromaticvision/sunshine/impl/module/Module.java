@@ -36,6 +36,8 @@ public class Module {
     public Module(String name, Category category) {
         this.name = name;
         this.category = category;
+
+
     }
 
     public Module(String name, String description, Category category) {
