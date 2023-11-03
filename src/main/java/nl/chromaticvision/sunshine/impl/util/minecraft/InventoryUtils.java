@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
@@ -39,6 +41,49 @@ public class InventoryUtils {
         }
 
         return EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, itemStack) > Enchantments.SHARPNESS.getMaxLevel();
+    }
+
+    public static int findHotbarItemStack(ItemStack itemStack) {
+        for (int i = 0; i < 9; ++i) {
+
+            ItemStack slot = mc.player.inventory.mainInventory.get(i);
+
+            if (slot.equals(itemStack)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static int findHotbarItem(Item item) {
+        for (int i = 0; i < 9; ++i) {
+
+            Item slot = mc.player.inventory.mainInventory.get(i).getItem();
+
+            if (slot.equals(item)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static int findShulkerWith32ksInside() {
+        for (int i = 0; i < 36; ++i) {
+            ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+            if (itemStack.getItem() instanceof ItemShulkerBox) {
+
+                List<ItemStack> items = getShulkerContents(itemStack);
+
+                for (ItemStack content : items) {
+                    if (isOverEnchantedItem(content)) {
+                        return i < 9 ? i + 36 : i;
+                    }
+                }
+            }
+        }
+        return -1;
     }
 
     public static void update(int index, boolean silent) {

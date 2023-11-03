@@ -6,6 +6,7 @@ public enum Category {
     EXPLOIT,
     MOVEMENT,
     RENDER,
-    MISC;
+    MISC,
+    SHULKERPVP
 
 }

@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 public class BlockUtils {
 
@@ -59,16 +60,15 @@ public class BlockUtils {
             return;
         }
 
-        Vec3d hitVec = new Vec3d(blockPos.offset(side))
-                .add((new Vec3d(0.5, 0.5, 0.5))
-                        .add(new Vec3d(side.getOpposite().getDirectionVec())
-                                .scale(0.5)));
+        final BlockPos neighbor = blockPos.offset(side);
+        final Vec3d hitVec = new Vec3d((neighbor).add(0.5, 0.5, 0.5)).add(new Vec3d(side.getOpposite().getDirectionVec()).scale(0.5));
 
         mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
         mc.playerController.processRightClickBlock(mc.player, mc.world, blockPos.offset(side), side.getOpposite(), hitVec, EnumHand.MAIN_HAND);
         mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
         mc.player.connection.sendPacket(new CPacketHeldItemChange(mc.player.inventory.currentItem));
         mc.player.swingArm(EnumHand.MAIN_HAND);
+//        mc.rightClickDelayTimer = 4;
     }
 
     public static void clickBlock(BlockPos blockPos, EnumHand hand) {

@@ -24,7 +24,7 @@ import java.util.List;
 public class Aura32k extends Module {
 
     public Aura32k() {
-        super("32kAura", "Attacks super fast players around you when you have 32k in your hand", Category.COMBAT);
+        super("32kAura", "Attacks super fast players around you when you have 32k in your hand", Category.SHULKERPVP);
     }
 
     enum AttackMode {
@@ -87,6 +87,7 @@ public class Aura32k extends Module {
         if (mc.world == null || mc.player == null) return;
 
         if (this.isEnabled()) {
+
             if (mc.world == null || mc.player == null) return;
 
             switch (delaySetting.getValue()) {
@@ -115,7 +116,6 @@ public class Aura32k extends Module {
                     break;
                 }
 
-                System.out.println("not found");
                 superWeaponIndex = -1;
             }
 
@@ -124,7 +124,6 @@ public class Aura32k extends Module {
                 for (EntityPlayer target : mc.world.playerEntities) {
                     if (!target.getName().equals(mc.getSession().getUsername()) && mc.player.getDistance(target) <= reachSetting.getValue() && target.getHealth() > 0 && !target.isDead) {
                         targets.add(target);
-                        System.out.println("target found");
                     }
                 }
 
@@ -142,7 +141,7 @@ public class Aura32k extends Module {
                         }
 
                         if (silent.getValue()) {
-                            if (mc.player.inventory.getStackInSlot(superWeaponIndex).getItem().equals(Items.DIAMOND_SWORD) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, mc.player.inventory.getStackInSlot(superWeaponIndex)) >= Short.MAX_VALUE) {
+                            if (mc.player.inventory.getStackInSlot(superWeaponIndex).getItem().equals(Items.DIAMOND_SWORD) && InventoryUtils.isOverEnchantedItem(mc.player.inventory.getStackInSlot(superWeaponIndex))) {
                                 mc.player.connection.sendPacket(new CPacketHeldItemChange(superWeaponIndex));
                                 mc.playerController.updateController();
                                 mc.player.connection.sendPacket(new CPacketUseEntity(currentTarget));
@@ -165,9 +164,7 @@ public class Aura32k extends Module {
 
                         if (drawCircle.getValue()) {
                             targetToDraw = currentTarget;
-                        } else {
-                            targetToDraw = null;
-                        }
+                        } else targetToDraw = null;
 
                         if (targetMode.getValue() == TargetMode.SWITCH) {
                             currentTargetIndex = (currentTargetIndex + 1) % targets.size();
@@ -176,51 +173,6 @@ public class Aura32k extends Module {
                 }
             }
         }
-    }
-
-    @SubscribeEvent
-    public void onRenderOverlay(RenderGameOverlayEvent event) {
-        if (this.isEnabled()) {
-            if (targetToDraw != null && event.getType() == RenderGameOverlayEvent.ElementType.HELMET) {
-                drawCircleOnTargetHead(targetToDraw);
-            }
-        }
-    }
-
-    private void drawCircleOnTargetHead(EntityPlayer target) {
-        ScaledResolution scaledResolution = new ScaledResolution(mc);
-        double x = scaledResolution.getScaledWidth() / 2.0;
-        double y = scaledResolution.getScaledHeight() / 2.0;
-        double radius = 15.0;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-
-        GlStateManager.color(1.0f, 0.0f, 0.0f, 0.5f);
-        GlStateManager.glLineWidth(2.0f);
-
-        for (int i = 0; i < 360; i++) {
-            double angle = Math.toRadians(i);
-            double x1 = x + radius * Math.cos(angle);
-            double y1 = y + radius * Math.sin(angle);
-            double x2 = x + radius * Math.cos(Math.toRadians(i + 1));
-            double y2 = y + radius * Math.sin(Math.toRadians(i + 1));
-            drawLine(x1, y1, x2, y2);
-        }
-
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
-        GlStateManager.popMatrix();
-    }
-
-    private void drawLine(double x1, double y1, double x2, double y2) {
-        GlStateManager.glBegin(1);
-//        GlStateManager.glVertex2d(x1, y1);
-//        GlStateManager.glVertex2d(x2, y2);
-        GlStateManager.glEnd();
     }
 
     private float[] getRotations(EntityPlayer target) {
