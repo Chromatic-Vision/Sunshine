@@ -4,10 +4,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
@@ -16,13 +19,29 @@ public class BlockUtils {
 
     private static final Minecraft mc = Minecraft.getMinecraft();
 
-    public static boolean isEmptyBlock(BlockPos blockPos) {
+    public static boolean isEmptyBlock(BlockPos blockPos, boolean checkEntity) {
+
+        if (checkEntity) {
+
+            AxisAlignedBB box = new AxisAlignedBB(blockPos);
+
+            for (Entity entity : mc.world.getLoadedEntityList()) {
+                if (entity instanceof EntityLivingBase && box.intersects(entity.getEntityBoundingBox())) {
+                    return false;
+                }
+            }
+        }
+
         return mc.world.getBlockState(blockPos).getBlock() instanceof BlockAir
                 || mc.world.getBlockState(blockPos).getBlock() instanceof BlockLiquid;
     }
 
     public static boolean validToPlace(BlockPos blockPos) {
+
+        if (!isEmptyBlock(blockPos, true)) return false;
+
         for (EnumFacing facing : EnumFacing.values()) {
+
             if (mc.world.getBlockState(blockPos.offset(facing)).getMaterial().isSolid()) {
                 return true;
             }
@@ -43,7 +62,7 @@ public class BlockUtils {
 
     public static EnumFacing getPlaceableSide(BlockPos blockPos) {
         for (EnumFacing facing : EnumFacing.values()) {
-            if (!isEmptyBlock(blockPos.offset(facing))) {
+            if (!isEmptyBlock(blockPos.offset(facing), false)) {
                 return facing;
             }
         }

@@ -136,8 +136,8 @@ public class ShulkerHopper extends Module {
                                 z + mc.player.posZ)
                         );
 
-                        if (BlockUtils.isEmptyBlock(blockPos)
-                                && BlockUtils.isEmptyBlock(blockPos.up())
+                        if (BlockUtils.isEmptyBlock(blockPos, true)
+                                && BlockUtils.isEmptyBlock(blockPos.up(), true)
                                 && BlockUtils.validToPlace(blockPos)
                                 && !BlockUtils.collideWith(blockPos, Blocks.REDSTONE_BLOCK)) {
                             hopperBasePos = blockPos;

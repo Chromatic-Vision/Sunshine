@@ -41,6 +41,11 @@ public class Auto32k extends Module {
         FAST
     }
 
+    enum PlaceType {
+        NORMAL,
+        DOWN
+    }
+
     public final Setting<Boolean> silent = register(new Setting<>("Silent", false));
     public final Setting<TickMode> tickMode = register(new Setting<>("TickMode", TickMode.NORMAL));
     public final Setting<Integer> placeRange = register(new Setting<>("PlaceRange", 3, 2, 6));
@@ -89,6 +94,7 @@ public class Auto32k extends Module {
     public int shulker = -1;
     public int hopper = -1;
     public EnumFacing dispenserRotation = null;
+    public PlaceType placeType = null;
 
     public BlockPos dispenserPos = null;
     public int phase = 0;
@@ -125,14 +131,20 @@ public class Auto32k extends Module {
 
     public boolean checkViableDispenserPos(BlockPos blockPos) {
         for (EnumFacing facing : EnumFacing.HORIZONTALS) {
-            BlockPos dispenserOffsetBlock = blockPos.offset(facing);
-            if (BlockUtils.isEmptyBlock(dispenserOffsetBlock)
-                    && BlockUtils.isEmptyBlock(dispenserOffsetBlock.down())
-                    && BlockUtils.validToPlace(dispenserOffsetBlock.down())
-                    && !BlockUtils.collideWith(dispenserOffsetBlock.down(), Blocks.REDSTONE_BLOCK)) {
-                if (BlockUtils.isEmptyBlock(blockPos)
-                        && BlockUtils.validToPlace(blockPos)
-                        && BlockUtils.isEmptyBlock(blockPos.up())) {
+
+            if (BlockUtils.isEmptyBlock(blockPos, true)
+                    && BlockUtils.validToPlace(blockPos)
+                    && EnumFacing.getDirectionFromEntityLiving(blockPos, mc.player) != EnumFacing.UP
+                    && EnumFacing.getDirectionFromEntityLiving(blockPos, mc.player) != EnumFacing.DOWN
+                    && BlockUtils.isEmptyBlock(blockPos.up(), true)) { // check first if base pos is valid
+
+                BlockPos dispenserOffsetBlock = blockPos.offset(facing);
+
+                if (BlockUtils.isEmptyBlock(dispenserOffsetBlock, true)
+                        && BlockUtils.isEmptyBlock(dispenserOffsetBlock.down(), true)
+                        && BlockUtils.validToPlace(dispenserOffsetBlock.down())
+                        && !BlockUtils.collideWith(dispenserOffsetBlock.down(), Blocks.REDSTONE_BLOCK)) {
+
                     dispenserRotation = facing.getOpposite();
                     return true;
                 }
@@ -185,13 +197,6 @@ public class Auto32k extends Module {
                 }
             }
 
-            // Rotation fix
-            if (yaw < -180.0f) {
-                yaw += 360.0f;
-            } else if (yaw > 180.0f) {
-                yaw -= 360.0f;
-            }
-
             mc.player.connection.sendPacket(new CPacketPlayer.Rotation(yaw, mc.player.rotationPitch, mc.player.onGround));
             InventoryUtils.update(dispenser, silent.getValue());
             BlockUtils.placeBlock(dispenserPos);
@@ -213,7 +218,7 @@ public class Auto32k extends Module {
         if (phase == 2) {
             BlockPos hopperPos = dispenserPos.down().offset(dispenserRotation.getOpposite());
 
-            if (BlockUtils.isEmptyBlock(hopperPos)) {
+            if (BlockUtils.isEmptyBlock(hopperPos, true)) {
                 InventoryUtils.update(hopper, silent.getValue());
                 BlockUtils.placeBlock(hopperPos);
                 BlockUtils.clickBlock(hopperPos, EnumHand.MAIN_HAND);
