@@ -41,17 +41,10 @@ public class Auto32k extends Module {
         FAST
     }
 
-    enum AirPlaceRange {
-        NONE,
-        RANGE_2_0,
-        RANGE_3_0,
-        RANGE_4_0
-    }
-
     public final Setting<Boolean> silent = register(new Setting<>("Silent", false));
     public final Setting<TickMode> tickMode = register(new Setting<>("TickMode", TickMode.NORMAL));
     public final Setting<Integer> placeRange = register(new Setting<>("PlaceRange", 3, 2, 6));
-    public final Setting<AirPlaceRange> airPlaceRange = register(new Setting<>("AirPlaceRange", AirPlaceRange.NONE));
+    public final Setting<Double> airPlaceRange = register(new Setting<>("AirPlaceRange", 2.0, 0.0,5.0));
     public final Setting<Boolean> strafeFix = register(new Setting<>("StrafeFix", false));
     public final Setting<Boolean> safePlace = register(new Setting<>("SafePlace", false));
 
@@ -113,25 +106,12 @@ public class Auto32k extends Module {
     }
 
     public BlockPos getAvailableDispenserPos() {
-        double range = 0.0;
-
-        switch (airPlaceRange.getValue()) {
-            case RANGE_2_0:
-                range = 2.0;
-                break;
-            case RANGE_3_0:
-                range = 3.0;
-                break;
-            case RANGE_4_0:
-                range = 4.0;
-                break;
-        }
 
         for (int x = -placeRange.getValue(); x <= placeRange.getValue(); x++) {
             for (int y = -placeRange.getValue(); y <= placeRange.getValue(); y++) {
                 for (int z = -placeRange.getValue(); z <= placeRange.getValue(); z++) {
                     BlockPos basePos = new BlockPos(new Vec3d(x + mc.player.posX, y + mc.player.posY, z + mc.player.posZ));
-                    if (basePos.distanceSq(mc.player.getPosition()) <= range * range && checkViableDispenserPos(basePos)) {
+                    if (basePos.distanceSq(mc.player.getPosition()) <= airPlaceRange.getValue() * airPlaceRange.getValue() && checkViableDispenserPos(basePos)) {
                         if (!isPlayerWithinRange(basePos, 6.0)) {
                             return basePos;
                         }
