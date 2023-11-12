@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuiContainer.class)
-public class MixinGuiContainer {
+public class MixinGuiContainer { // it's used for debugging
 
     @Inject(method = "handleMouseClick",
             at = @At("RETURN")

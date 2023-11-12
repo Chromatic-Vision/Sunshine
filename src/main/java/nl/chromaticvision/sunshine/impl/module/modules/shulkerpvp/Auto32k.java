@@ -7,6 +7,7 @@ import net.minecraft.inventory.ContainerDispenser;
 import net.minecraft.inventory.ContainerHopper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.EnumFacing;
@@ -56,9 +57,7 @@ public class Auto32k extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
-
-        initialized = false;
-        phase = 0;
+        execute();
     }
 
     @Override
@@ -66,35 +65,14 @@ public class Auto32k extends Module {
         super.onDisable();
     }
 
-    @Override
-    public void onTick() {
-        if (tickMode.getValue() == TickMode.NORMAL) {
-            if (!initialized) {
-                start();
-            } else {
-                update();
-            }
-        }
-    }
 
-    @Override
-    public void onFastTick() {
-        if (tickMode.getValue() == TickMode.FAST) {
-            if (!initialized) {
-                start();
-            } else {
-                update();
-            }
-        }
-    }
-
-    private boolean initialized = false;
     public int dispenser = -1;
     public int redstone = -1;
     public int shulker = -1;
     public int hopper = -1;
     public EnumFacing dispenserRotation = null;
-    public PlaceType placeType = null;
+    public boolean waitingForSuperweapon = false;
+    public boolean waitingForShulker = false;
 
     public BlockPos dispenserPos = null;
     public int phase = 0;
@@ -143,7 +121,8 @@ public class Auto32k extends Module {
                 if (BlockUtils.isEmptyBlock(dispenserOffsetBlock, true)
                         && BlockUtils.isEmptyBlock(dispenserOffsetBlock.down(), true)
                         && BlockUtils.validToPlace(dispenserOffsetBlock.down())
-                        && !BlockUtils.collideWith(dispenserOffsetBlock.down(), Blocks.REDSTONE_BLOCK)) {
+                        && !BlockUtils.collideWith(dispenserOffsetBlock.down(), Blocks.REDSTONE_BLOCK)
+                        && !BlockUtils.collideWith(blockPos, Blocks.HOPPER)) {
 
                     dispenserRotation = facing.getOpposite();
                     return true;
@@ -154,7 +133,8 @@ public class Auto32k extends Module {
         return false;
     }
 
-    public void start() {
+    public void execute() {
+
         if (!safeToUpdate()) return;
 
         if (!checkItems()) {
@@ -162,6 +142,9 @@ public class Auto32k extends Module {
             disable();
             return;
         }
+
+        waitingForSuperweapon = false;
+        waitingForShulker = false;
 
         dispenserRotation = null;
 
@@ -173,62 +156,75 @@ public class Auto32k extends Module {
             return;
         }
 
-        initialized = true;
-    }
+        // Send rotating packet and start placing dispenser
 
-    public void update() {
-        if (phase == 0) {
-            float yaw = 0.0f; // default
+        float yaw = 0.0f; // default
 
-            if (dispenserRotation != null) {
-                switch (dispenserRotation) {
-                    case NORTH:
-                        yaw = -180.0f;
-                        break;
-                    case EAST:
-                        yaw = -90.0f;
-                        break;
-                    case SOUTH:
-                        yaw = 0.0f;
-                        break;
-                    case WEST:
-                        yaw = 90.0f;
-                        break;
-                }
+        if (dispenserRotation != null) {
+            switch (dispenserRotation) {
+                case NORTH:
+                    yaw = -180.0f;
+                    break;
+                case EAST:
+                    yaw = -90.0f;
+                    break;
+                case SOUTH:
+                    yaw = 0.0f;
+                    break;
+                case WEST:
+                    yaw = 90.0f;
+                    break;
             }
-
-            mc.player.connection.sendPacket(new CPacketPlayer.Rotation(yaw, mc.player.rotationPitch, mc.player.onGround));
-            InventoryUtils.update(dispenser, silent.getValue());
-            BlockUtils.placeBlock(dispenserPos);
-            mc.player.connection.sendPacket(new CPacketPlayer.Rotation(mc.player.rotationYaw, mc.player.rotationPitch, mc.player.onGround));
-            BlockUtils.clickBlock(dispenserPos, EnumHand.MAIN_HAND);
-            phase = 1;
         }
 
-        if (phase == 1) {
+        mc.player.connection.sendPacket(new CPacketPlayer.Rotation(yaw, mc.player.rotationPitch, mc.player.onGround));
+
+        // Place dispenser
+        InventoryUtils.update(dispenser, silent.getValue());
+        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
+        BlockUtils.placeBlockDirectly(dispenserPos);
+        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
+        mc.player.connection.sendPacket(new CPacketPlayer.Rotation(mc.player.rotationYaw, mc.player.rotationPitch, mc.player.onGround));
+
+        // Place hopper
+        InventoryUtils.update(hopper, silent.getValue());
+        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
+        BlockUtils.placeBlockDirectly(dispenserPos.down().offset(dispenserRotation.getOpposite()));
+        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
+
+        // Open dispenser and swap shulker
+        BlockUtils.rightClickBlockDirectly(dispenserPos);
+        waitingForShulker = true;
+    }
+
+    public void finish() {
+        // Place redstone block
+        InventoryUtils.update(redstone, silent.getValue());
+        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
+        BlockUtils.rightClickBlockDirectly(dispenserPos.up());
+        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
+
+        // Open hopper
+        BlockUtils.rightClickBlockDirectly(dispenserPos.down().offset(dispenserRotation.getOpposite()));
+        waitingForSuperweapon = true;
+    }
+
+    @Override
+    public void onTick() {
+
+        if (waitingForShulker) {
+
             if (!(mc.player.openContainer instanceof ContainerDispenser) || mc.player.openContainer.inventorySlots == null) return;
 
             mc.playerController.windowClick(mc.player.openContainer.windowId, shulker, 0, ClickType.QUICK_MOVE, mc.player);
-            InventoryUtils.update(redstone, silent.getValue());
-            BlockUtils.placeBlock(dispenserPos.up());
             mc.player.closeScreen();
-            phase = 2;
+
+            finish();
+
+            waitingForShulker = false;
         }
 
-        if (phase == 2) {
-            BlockPos hopperPos = dispenserPos.down().offset(dispenserRotation.getOpposite());
-
-            if (BlockUtils.isEmptyBlock(hopperPos, true)) {
-                InventoryUtils.update(hopper, silent.getValue());
-                BlockUtils.placeBlock(hopperPos);
-                BlockUtils.clickBlock(hopperPos, EnumHand.MAIN_HAND);
-                mc.player.connection.sendPacket(new CPacketHeldItemChange(mc.player.inventory.currentItem));
-                mc.playerController.updateController();
-                phase = 3;
-            }
-        }
-
-        if (phase == 3) {
+        if (waitingForSuperweapon) {
             if (!(mc.player.openContainer instanceof ContainerHopper) || mc.player.openContainer.inventorySlots == null) return;
 
             for (int i = 0; i < 5; i++) {
@@ -242,7 +238,8 @@ public class Auto32k extends Module {
                             mc.player
                     );
                     mc.displayGuiScreen(null);
-                    phase = 4;
+                    waitingForSuperweapon = false;
+                    disable();
                     break;
                 }
             }
@@ -252,9 +249,8 @@ public class Auto32k extends Module {
     private boolean isPlayerWithinRange(BlockPos pos, double range) {
         if (!safePlace.getValue()) return false;
 
-        for (Object playerObj : mc.world.playerEntities) {
-            if (playerObj instanceof EntityPlayer) {
-                EntityPlayer player = (EntityPlayer) playerObj;
+        for (EntityPlayer player : mc.world.playerEntities) {
+            if (player != null) {
                 if (player.getDistanceSq(pos) < range * range) {
                     return true;
                 }

@@ -10,7 +10,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import nl.chromaticvision.sunshine.impl.module.modules.exploit.AnvilSwap;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.ClickGUIModule;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.SilentPearl;
-import nl.chromaticvision.sunshine.impl.module.modules.misc.ShulkerHopper;
 import nl.chromaticvision.sunshine.impl.module.modules.render.FullBright;
 import nl.chromaticvision.sunshine.impl.module.modules.render.ShulkerPreview;
 import nl.chromaticvision.sunshine.impl.module.modules.shulkerpvp.Aura32k;

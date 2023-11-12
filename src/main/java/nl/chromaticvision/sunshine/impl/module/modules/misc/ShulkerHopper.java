@@ -180,7 +180,7 @@ public class ShulkerHopper extends Module {
             }
 
             if (phase == 4) {
-                BlockUtils.clickBlock(hopperBasePos, EnumHand.MAIN_HAND);
+                BlockUtils.rightClickBlockDirectly(hopperBasePos);
                 phase++;
             }
 

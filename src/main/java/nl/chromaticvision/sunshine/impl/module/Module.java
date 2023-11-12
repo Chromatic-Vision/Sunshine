@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import nl.chromaticvision.sunshine.Reference;
-import nl.chromaticvision.sunshine.api.toast.CustomToast;
 import nl.chromaticvision.sunshine.impl.module.settings.Bind;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 import nl.chromaticvision.sunshine.impl.util.minecraft.MessageUtils;
@@ -22,6 +21,7 @@ public class Module {
     public String name;
     public String description = null;
     public Category category;
+    public ItemStack displayStack = null;
 
     public boolean enabled;
     public List<Setting> settings = new ArrayList<Setting>();
@@ -36,8 +36,6 @@ public class Module {
     public Module(String name, Category category) {
         this.name = name;
         this.category = category;
-
-
     }
 
     public Module(String name, String description, Category category) {
@@ -46,12 +44,19 @@ public class Module {
         this.category = category;
     }
 
+    public Module(String name, String description, Category category, ItemStack displayStack) {
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.displayStack = displayStack;
+    }
+
     public void onEnable() {
         MinecraftForge.EVENT_BUS.register(this);
 
         MessageUtils.addCustomAdvancementTypeToast(Reference.NAME,
                 TextFormatting.RESET + this.getName() + TextFormatting.GREEN + " enabled.",
-                new ItemStack(Item.getItemFromBlock(Blocks.CONCRETE), 1, 13),
+                this.displayStack == null ? new ItemStack(Item.getItemFromBlock(Blocks.CONCRETE), 1, 13) : this.displayStack,
                 3000L
         );
     }
@@ -61,7 +66,7 @@ public class Module {
 
         MessageUtils.addCustomAdvancementTypeToast(Reference.NAME,
                 TextFormatting.RESET + this.getName() + TextFormatting.RED + " disabled.",
-                new ItemStack(Item.getItemFromBlock(Blocks.CONCRETE), 1, 14),
+                this.displayStack == null ? new ItemStack(Item.getItemFromBlock(Blocks.CONCRETE), 1, 14) : this.displayStack,
                 3000L
         );
     }

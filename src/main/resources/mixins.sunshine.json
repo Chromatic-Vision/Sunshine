@@ -4,5 +4,6 @@
   "package": "nl.chromaticvision.sunshine.mixin.mixins",
   "refmap": "mixins.sunshine.refmap.json",
   "mixins": [
+    "MixinPlayerContollerMP"
   ]
 }
