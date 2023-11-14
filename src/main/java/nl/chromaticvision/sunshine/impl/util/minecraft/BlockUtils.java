@@ -107,25 +107,6 @@ public class BlockUtils {
                 EnumHand.MAIN_HAND);
     }
 
-    public static void placeTest() {
-
-        BlockPos blockPos = mc.objectMouseOver.getBlockPos();
-        Vec3d hitVec = mc.objectMouseOver.hitVec;
-
-        float f = (float)(hitVec.x - (double) blockPos.getX());
-        float f1 = (float)(hitVec.y - (double) blockPos.getY());
-        float f2 = (float)(hitVec.z - (double) blockPos.getZ());
-
-        mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(
-                blockPos,
-                mc.objectMouseOver.sideHit,
-                EnumHand.MAIN_HAND,
-                f,
-                f1,
-                f2
-        ));
-    }
-
     public static void placeBlockDirectly(BlockPos blockPos) {
 
         EnumFacing side = BlockUtils.getPlaceableSide(blockPos);

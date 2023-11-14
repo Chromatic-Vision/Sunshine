@@ -8,10 +8,8 @@ import net.minecraft.inventory.ContainerHopper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketEntityAction;
-import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import nl.chromaticvision.sunshine.impl.module.Category;
@@ -37,21 +35,16 @@ public class Auto32k extends Module {
         super("Auto32k", "Automatically creates 32k setup using dispensers", Category.SHULKERPVP);
     }
 
-    enum TickMode {
-        NORMAL,
-        FAST
-    }
-
     enum PlaceType {
         NORMAL,
         DOWN
     }
 
     public final Setting<Boolean> silent = register(new Setting<>("Silent", false));
-    public final Setting<TickMode> tickMode = register(new Setting<>("TickMode", TickMode.NORMAL));
+    public final Setting<Boolean> select32k = register(new Setting<>("Select32kSlot", false));
     public final Setting<Integer> placeRange = register(new Setting<>("PlaceRange", 3, 2, 6));
     public final Setting<Double> airPlaceRange = register(new Setting<>("AirPlaceRange", 2.0, 0.0,5.0));
-    public final Setting<Boolean> strafeFix = register(new Setting<>("StrafeFix", false));
+//    public final Setting<Boolean> strafeFix = register(new Setting<>("StrafeFix", false));
     public final Setting<Boolean> safePlace = register(new Setting<>("SafePlace", false));
 
     @Override
@@ -73,9 +66,10 @@ public class Auto32k extends Module {
     public EnumFacing dispenserRotation = null;
     public boolean waitingForSuperweapon = false;
     public boolean waitingForShulker = false;
+    long time = 0L;
+    long completedIn = 0L;
 
     public BlockPos dispenserPos = null;
-    public int phase = 0;
 
     public boolean checkItems() { // returns true if items are found
 
@@ -135,18 +129,18 @@ public class Auto32k extends Module {
 
     public void execute() {
 
+        time = System.currentTimeMillis();
+
         if (!safeToUpdate()) return;
 
         if (!checkItems()) {
             MessageUtils.sendClientChatMessage("Missing items.");
-            disable();
+            this.disable();
             return;
         }
 
         waitingForSuperweapon = false;
         waitingForShulker = false;
-
-        dispenserRotation = null;
 
         dispenserPos = getAvailableDispenserPos();
 
@@ -160,27 +154,26 @@ public class Auto32k extends Module {
 
         float yaw = 0.0f; // default
 
-        if (dispenserRotation != null) {
-            switch (dispenserRotation) {
-                case NORTH:
-                    yaw = -180.0f;
-                    break;
-                case EAST:
-                    yaw = -90.0f;
-                    break;
-                case SOUTH:
-                    yaw = 0.0f;
-                    break;
-                case WEST:
-                    yaw = 90.0f;
-                    break;
-            }
+        switch (dispenserRotation) {
+            case NORTH:
+                yaw = -180.0f;
+                break;
+            case EAST:
+                yaw = -90.0f;
+                break;
+            case SOUTH:
+                yaw = 0.0f;
+                break;
+            case WEST:
+                yaw = 90.0f;
+                break;
         }
 
         mc.player.connection.sendPacket(new CPacketPlayer.Rotation(yaw, mc.player.rotationPitch, mc.player.onGround));
 
         // Place dispenser
         InventoryUtils.update(dispenser, silent.getValue());
+
         mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
         BlockUtils.placeBlockDirectly(dispenserPos);
         mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
@@ -188,6 +181,7 @@ public class Auto32k extends Module {
 
         // Place hopper
         InventoryUtils.update(hopper, silent.getValue());
+
         mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
         BlockUtils.placeBlockDirectly(dispenserPos.down().offset(dispenserRotation.getOpposite()));
         mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
@@ -197,48 +191,60 @@ public class Auto32k extends Module {
         waitingForShulker = true;
     }
 
-    public void finish() {
-        // Place redstone block
-        InventoryUtils.update(redstone, silent.getValue());
-        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-        BlockUtils.rightClickBlockDirectly(dispenserPos.up());
-        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-
-        // Open hopper
-        BlockUtils.rightClickBlockDirectly(dispenserPos.down().offset(dispenserRotation.getOpposite()));
-        waitingForSuperweapon = true;
-    }
-
     @Override
-    public void onTick() {
+    public void onFastTick() {
 
         if (waitingForShulker) {
 
-            if (!(mc.player.openContainer instanceof ContainerDispenser) || mc.player.openContainer.inventorySlots == null) return;
+            if (mc.player.openContainer instanceof ContainerDispenser && mc.player.openContainer.inventorySlots != null) {
+                mc.playerController.windowClick(mc.player.openContainer.windowId, shulker, 0, ClickType.QUICK_MOVE, mc.player);
 
-            mc.playerController.windowClick(mc.player.openContainer.windowId, shulker, 0, ClickType.QUICK_MOVE, mc.player);
-            mc.player.closeScreen();
+                // Place redstone
+                InventoryUtils.update(redstone, silent.getValue());
+                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
+                BlockUtils.placeBlockDirectly(dispenserPos.up());
+                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
 
-            finish();
-
-            waitingForShulker = false;
+                // Open hopper
+                BlockUtils.rightClickBlockDirectly(dispenserPos.down().offset(dispenserRotation.getOpposite()));
+                waitingForSuperweapon = true;
+                waitingForShulker = false;
+            }
         }
 
         if (waitingForSuperweapon) {
-            if (!(mc.player.openContainer instanceof ContainerHopper) || mc.player.openContainer.inventorySlots == null) return;
+
+            if (!(mc.player.openContainer instanceof ContainerHopper) || mc.player.openContainer.inventorySlots == null)
+                return;
 
             for (int i = 0; i < 5; i++) {
                 ItemStack slotStack = mc.player.openContainer.inventorySlots.get(0).inventory.getStackInSlot(i);
 
                 if (InventoryUtils.isOverEnchantedItem(slotStack)) {
+
+                    int slot = InventoryUtils.findHotbarReverted32k() != -1
+                            ? InventoryUtils.findHotbarReverted32k()
+
+                            :
+
+                            InventoryUtils.findHotbarItem(Item.getItemFromBlock(Blocks.AIR)) != -1
+                                    ? InventoryUtils.findHotbarItem(Item.getItemFromBlock(Blocks.AIR))
+
+                                    :
+
+                                    mc.player.inventory.currentItem;
+
                     mc.playerController.windowClick(mc.player.openContainer.windowId,
                             i,
-                            mc.player.inventory.currentItem,
+                            slot,
                             ClickType.SWAP,
                             mc.player
                     );
+                    InventoryUtils.update(select32k.getValue() ? slot : mc.player.inventory.currentItem, false);
                     mc.displayGuiScreen(null);
-                    waitingForSuperweapon = false;
+
+                    completedIn = System.currentTimeMillis() - time;
+//                    MessageUtils.sendClientChatMessage("Completed in " + completedIn + " ms.");
                     disable();
                     break;
                 }
@@ -247,6 +253,7 @@ public class Auto32k extends Module {
     }
 
     private boolean isPlayerWithinRange(BlockPos pos, double range) {
+
         if (!safePlace.getValue()) return false;
 
         for (EntityPlayer player : mc.world.playerEntities) {

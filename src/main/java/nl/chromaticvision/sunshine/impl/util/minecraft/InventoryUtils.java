@@ -7,6 +7,7 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.util.NonNullList;
@@ -69,6 +70,28 @@ public class InventoryUtils {
         return -1;
     }
 
+    public static boolean isReverted32k(ItemStack itemStack) {
+
+        if (itemStack.getTagCompound() == null) {
+            return false;
+        }
+
+        return itemStack.getItem() instanceof ItemSword && EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, itemStack) <= Enchantments.SHARPNESS.getMaxLevel();
+    }
+
+    public static int findHotbarReverted32k() {
+        for (int i = 0; i < 9; ++i) {
+
+            ItemStack slot = mc.player.inventory.mainInventory.get(i);
+
+            if (isReverted32k(slot)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     public static int findShulkerWith32ksInside() {
         for (int i = 0; i < 36; ++i) {
             ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
@@ -89,6 +112,5 @@ public class InventoryUtils {
     public static void update(int index, boolean silent) {
         mc.player.connection.sendPacket(new CPacketHeldItemChange(index));
         if (!silent) mc.player.inventory.currentItem = index;
-        mc.playerController.updateController();
     }
 }

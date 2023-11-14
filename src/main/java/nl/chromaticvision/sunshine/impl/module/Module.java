@@ -73,15 +73,15 @@ public class Module {
 
     public void enable() {
         if (!this.enabled) {
-            onEnable();
             this.enabled = true;
+            onEnable();
         }
     }
 
     public void disable() {
         if (this.enabled) {
-            onDisable();
             this.enabled = false;
+            onDisable();
         }
     }
 
