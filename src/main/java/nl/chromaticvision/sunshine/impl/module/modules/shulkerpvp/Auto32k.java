@@ -32,7 +32,11 @@ Safe Place (makes sure not to place the 32k anywhere withing 6 blocks of other p
 public class Auto32k extends Module {
 
     public Auto32k() {
-        super("Auto32k", "Automatically creates 32k setup using dispensers", Category.SHULKERPVP);
+        super("Auto32k",
+                "Automatically creates 32k setup using dispensers",
+                Category.SHULKERPVP,
+                new ItemStack(Blocks.DISPENSER)
+        );
     }
 
     enum PlaceType {
@@ -135,7 +139,7 @@ public class Auto32k extends Module {
 
         if (!checkItems()) {
             MessageUtils.sendClientChatMessage("Missing items.");
-            this.disable();
+            disable();
             return;
         }
 

@@ -127,7 +127,8 @@ public class Setting <T> {
                 && !(this.value instanceof Character)
                 && !(this.value instanceof Boolean)
                 && !(this.value instanceof Bind)
-                && !this.name.equals("Keybind");
+                && !this.name.equalsIgnoreCase("Keybind")
+                && !this.name.equalsIgnoreCase("DisplayName");
     }
 
     public boolean isStringSetting() {

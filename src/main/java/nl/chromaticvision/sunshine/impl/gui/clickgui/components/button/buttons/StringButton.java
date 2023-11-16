@@ -2,6 +2,7 @@ package nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.buttons;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ChatAllowedCharacters;
+import nl.chromaticvision.sunshine.impl.gui.clickgui.ClickGUI;
 import nl.chromaticvision.sunshine.impl.gui.clickgui.components.button.Button;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 
@@ -54,7 +55,14 @@ public class StringButton extends Button {
                     }
                 case 28:
                     listening = false;
-                    parentSetting.setValue(input);
+
+                    System.out.println(parentSetting.getName());
+
+                    if (parentSetting.getName().equalsIgnoreCase("DisplayName") && input.equalsIgnoreCase("")) {
+                        parentSetting.setValue(ClickGUI.getInstance().settingPanelComponent.getCurrentModule().getName());
+                    } else {
+                        parentSetting.setValue(input);
+                    }
 
                     input = "";
                     break;

@@ -76,8 +76,6 @@ public class ModuleManager {
         modules.stream()
                 .filter(Module::isEnabled)
                 .forEach(Module::onRenderOverlay);
-
-        //Minecraft.getMinecraft().fontRenderer.drawString("Sunshine!!", 2, 5, new Color(255, 228, 23).getRGB());
     }
 
     @SubscribeEvent

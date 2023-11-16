@@ -4,7 +4,10 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketUseEntity;
@@ -19,8 +22,33 @@ import java.util.List;
 
 public class Aura32k extends Module {
 
+    public static ItemStack get32kSword() {
+
+        NBTTagCompound enchantmentTag = new NBTTagCompound();
+
+        short enchantmentId = 16;
+        int enchantmentLevel = 32767;
+
+        enchantmentTag.setShort("id", enchantmentId);
+        enchantmentTag.setInteger("lvl", enchantmentLevel);
+
+        NBTTagCompound itemTag = new NBTTagCompound();
+        NBTTagList enchantmentsList = new NBTTagList();
+
+        enchantmentsList.appendTag(enchantmentTag);
+        itemTag.setTag("ench", enchantmentsList);
+
+        ItemStack itemStack = new ItemStack(Items.DIAMOND_SWORD);
+        itemStack.setTagCompound(itemTag);
+
+        return itemStack;
+    }
+
     public Aura32k() {
-        super("32kAura", "Attacks super fast players around you when you have 32k in your hand", Category.SHULKERPVP);
+        super("32kAura",
+                "Attacks super fast players around you when you have 32k in your hand",
+                Category.SHULKERPVP,
+                get32kSword());
     }
 
     enum AttackMode {

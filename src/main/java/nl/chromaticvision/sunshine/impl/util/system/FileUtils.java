@@ -67,7 +67,7 @@ public class FileUtils {
                 }
 
                 if (setting.isStringSetting()) {
-                    jsonObject.add(setting.getName(), jsonParser.parse(setting.getValueAsString().replace(" ", "__s__")));
+                    jsonObject.add(setting.getName(), jsonParser.parse(setting.getValueAsString().replace(" ", "__space__")));
                     continue;
                 }
 
@@ -184,7 +184,7 @@ public class FileUtils {
                             setting.setValue(element.getAsShort());
                             continue;
                         case "String":
-                            setting.setValue(element.getAsString().replace("__s__", " "));
+                            setting.setValue(element.getAsString().replace("__space__", " "));
                             continue;
                         case "Character":
                             setting.setValue(element.getAsCharacter());

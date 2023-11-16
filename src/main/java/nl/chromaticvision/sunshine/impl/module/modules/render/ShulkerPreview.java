@@ -5,6 +5,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -19,6 +20,7 @@ import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
 import nl.chromaticvision.sunshine.impl.module.settings.Bind;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
+import nl.chromaticvision.sunshine.impl.util.minecraft.BlockUtils;
 import nl.chromaticvision.sunshine.impl.util.minecraft.InventoryUtils;
 import nl.chromaticvision.sunshine.impl.util.minecraft.RenderUtils;
 import org.lwjgl.input.Keyboard;
@@ -26,6 +28,7 @@ import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class ShulkerPreview extends Module {
 
@@ -37,7 +40,8 @@ public class ShulkerPreview extends Module {
     public ShulkerPreview() {
         super("ShulkerPreview",
                 "Allows you to preview the content of shulker boxes in the containers. Hold the key you've bound to preview the shulker box.",
-                Category.RENDER
+                Category.RENDER,
+                new ItemStack(Blocks.PURPLE_SHULKER_BOX)
         );
     }
 
@@ -48,6 +52,8 @@ public class ShulkerPreview extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
+
+        this.setDisplayStack(new ItemStack(BlockUtils.shulkerList.get(new Random().nextInt(BlockUtils.shulkerList.size()))));
     }
 
     @Override

@@ -21,6 +21,7 @@ public class Module {
     public String name;
     public String description = null;
     public Category category;
+
     public ItemStack displayStack = null;
 
     public boolean enabled;
@@ -32,16 +33,21 @@ public class Module {
     }
 
     public Setting<Bind> bind = register(new Setting<>("Keybind", new Bind(-1)));
+    public Setting<String> displayName = register(new Setting<>("DisplayName", ""));
 
     public Module(String name, Category category) {
         this.name = name;
         this.category = category;
+
+        displayName.setValue(this.getName());
     }
 
     public Module(String name, String description, Category category) {
         this.name = name;
         this.description = description;
         this.category = category;
+
+        displayName.setValue(this.getName());
     }
 
     public Module(String name, String description, Category category, ItemStack displayStack) {
@@ -49,13 +55,15 @@ public class Module {
         this.description = description;
         this.category = category;
         this.displayStack = displayStack;
+
+        displayName.setValue(this.getName());
     }
 
     public void onEnable() {
         MinecraftForge.EVENT_BUS.register(this);
 
         MessageUtils.addCustomAdvancementTypeToast(Reference.NAME,
-                TextFormatting.RESET + this.getName() + TextFormatting.GREEN + " enabled.",
+                TextFormatting.RESET + this.getDisplayName() + TextFormatting.GREEN + " enabled.",
                 this.displayStack == null ? new ItemStack(Item.getItemFromBlock(Blocks.CONCRETE), 1, 13) : this.displayStack,
                 3000L
         );
@@ -65,7 +73,7 @@ public class Module {
         MinecraftForge.EVENT_BUS.unregister(this);
 
         MessageUtils.addCustomAdvancementTypeToast(Reference.NAME,
-                TextFormatting.RESET + this.getName() + TextFormatting.RED + " disabled.",
+                TextFormatting.RESET + this.getDisplayName() + TextFormatting.RED + " disabled.",
                 this.displayStack == null ? new ItemStack(Item.getItemFromBlock(Blocks.CONCRETE), 1, 14) : this.displayStack,
                 3000L
         );
@@ -173,6 +181,22 @@ public class Module {
 
     public Category getCategory() {
         return this.category;
+    }
+
+    public String getDisplayName() {
+        return this.displayName.getValue();
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName.setValue(displayName);
+    }
+
+    public ItemStack getDisplayStack() {
+        return displayStack;
+    }
+
+    public void setDisplayStack(ItemStack displayStack) {
+        this.displayStack = displayStack;
     }
 
     public void onTick() {}

@@ -1,30 +1,44 @@
 package nl.chromaticvision.sunshine.impl.util.minecraft;
 
 import net.minecraft.block.*;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
+import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameType;
 
-import java.util.Random;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class BlockUtils {
 
     private static final Minecraft mc = Minecraft.getMinecraft();
+    public static List<Block> shulkerList = Arrays.asList(
+            Blocks.RED_SHULKER_BOX,
+            Blocks.ORANGE_SHULKER_BOX,
+            Blocks.YELLOW_SHULKER_BOX,
+            Blocks.LIME_SHULKER_BOX,
+            Blocks.GREEN_SHULKER_BOX,
+            Blocks.LIGHT_BLUE_SHULKER_BOX,
+            Blocks.BLUE_SHULKER_BOX,
+            Blocks.CYAN_SHULKER_BOX,
+            Blocks.PURPLE_SHULKER_BOX,
+            Blocks.MAGENTA_SHULKER_BOX,
+            Blocks.PINK_SHULKER_BOX,
+            Blocks.GRAY_SHULKER_BOX,
+            Blocks.SILVER_SHULKER_BOX,
+            Blocks.BROWN_SHULKER_BOX,
+            Blocks.BLACK_SHULKER_BOX,
+            Blocks.WHITE_SHULKER_BOX
+    );
 
     public static boolean isEmptyBlock(BlockPos blockPos, boolean checkEntity) {
 
