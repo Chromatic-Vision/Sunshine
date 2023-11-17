@@ -53,8 +53,8 @@ public class BlockUtils {
             }
         }
 
-        return mc.world.getBlockState(blockPos).getBlock() instanceof BlockAir
-                || mc.world.getBlockState(blockPos).getBlock() instanceof BlockLiquid;
+        return mc.world.getBlockState(blockPos).getBlock() instanceof BlockLiquid
+                || mc.world.getBlockState(blockPos).getBlock() instanceof BlockAir;
     }
 
     public static boolean validToPlace(BlockPos blockPos) {
@@ -62,7 +62,6 @@ public class BlockUtils {
         if (!isEmptyBlock(blockPos, true)) return false;
 
         for (EnumFacing facing : EnumFacing.values()) {
-
             if (mc.world.getBlockState(blockPos.offset(facing)).getMaterial().isSolid()) {
                 return true;
             }
@@ -147,109 +146,5 @@ public class BlockUtils {
                 f1,
                 f2
         ));
-
-//        float f = (float)(hitVec.x - (double)blockPos.getX());
-//        float f1 = (float)(hitVec.y - (double)blockPos.getY());
-//        float f2 = (float)(hitVec.z - (double)blockPos.getZ());
-//
-//        mc.playerController.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(
-//                blockPos,
-//                side,
-//                EnumHand.MAIN_HAND,
-//                f,
-//                f1,
-//                f2
-//        ));
-//
-//
-
-        // mc.playerController.processRightClickBlock(mc.player, mc.world, neighbour, opposite, hitVec, EnumHand.MAIN_HAND);
-
-//        mc.playerController.syncCurrentPlayItem();
-//        ItemStack itemstack = mc.player.getHeldItem(EnumHand.MAIN_HAND);
-//        float f = (float)(hitVec.x - (double)blockPos.getX());
-//        float f1 = (float)(hitVec.y - (double)blockPos.getY());
-//        float f2 = (float)(hitVec.z - (double)blockPos.getZ());
-//        boolean flag = false;
-//
-//
-//        mc.playerController.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(
-//                blockPos,
-//                opposite,
-//                EnumHand.MAIN_HAND,
-//                f,
-//                f1,
-//                f2
-//        ));
-//        if (!mc.world.getWorldBorder().contains(blockPos))
-//        {
-//            System.out.println("Fail");
-//        }
-//        else
-//        {
-//            if (mc.playerController.currentGameType != GameType.SPECTATOR)
-//            {
-//                IBlockState iblockstate = mc.world.getBlockState(blockPos);
-//                boolean bypass = mc.player.getHeldItemMainhand().doesSneakBypassUse(mc.world, blockPos, mc.player) && mc.player.getHeldItemOffhand().doesSneakBypassUse(mc.world, blockPos, mc.player);
-//                if ((!mc.player.isSneaking() || bypass) && iblockstate.getBlock().onBlockActivated(mc.world, blockPos, iblockstate, mc.player, EnumHand.MAIN_HAND, opposite, f, f1, f2))
-//                {
-//                    flag = true;
-//                }
-//
-//                if (!flag && itemstack.getItem() instanceof ItemBlock)
-//                {
-//                    ItemBlock itemblock = (ItemBlock)itemstack.getItem();
-//
-//                    if (!itemblock.canPlaceBlockOnSide(mc.world, blockPos, opposite, mc.player, itemstack))
-//                    {
-//                        System.out.println("Fail");
-//                    }
-//                }
-//            }
-//
-//            mc.playerController.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(blockPos, opposite, EnumHand.MAIN_HAND, f, f1, f2));
-//
-//            if (!flag && mc.playerController.currentGameType != GameType.SPECTATOR)
-//            {
-//                if (itemstack.isEmpty())
-//                {
-//                    System.out.println("Pazz");
-//                }
-//                else if (mc.player.getCooldownTracker().hasCooldown(itemstack.getItem()))
-//                {
-//                    System.out.println("pazz");
-//                }
-//                else
-//                {
-//                    if (itemstack.getItem() instanceof ItemBlock && !mc.player.canUseCommandBlock())
-//                    {
-//                        Block block = ((ItemBlock)itemstack.getItem()).getBlock();
-//
-//                        if (block instanceof BlockCommandBlock || block instanceof BlockStructure)
-//                        {
-//                            System.out.println("Fail");
-//                        }
-//                    }
-//
-//                    if (mc.playerController.currentGameType.isCreative())
-//                    {
-//                        int i = itemstack.getMetadata();
-//                        int j = itemstack.getCount();
-//                        EnumActionResult enumactionresult = itemstack.onItemUse(mc.player, mc.world, blockPos, EnumHand.MAIN_HAND, opposite, f, f1, f2);
-//                        itemstack.setItemDamage(i);
-//                        itemstack.setCount(j);
-//                    }
-//                    else
-//                    {
-//                        EnumActionResult res = itemstack.onItemUse(mc.player, mc.world, blockPos, EnumHand.MAIN_HAND, opposite, f, f1, f2);
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                System.out.println("successs");
-//            }
-//        }
-//    }
     }
 }

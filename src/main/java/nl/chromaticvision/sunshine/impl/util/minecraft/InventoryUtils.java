@@ -4,10 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemShulkerBox;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.util.NonNullList;
@@ -33,6 +30,20 @@ public class InventoryUtils {
         }
 
         return shulkerList;
+    }
+
+    public static int getSolidBlockInHotbarNoShulker() {
+
+        for (int i = 0; i < 9; ++i) {
+
+            Item item = mc.player.inventory.mainInventory.get(i).getItem();
+
+            if (item instanceof ItemBlock && !(item instanceof ItemShulkerBox)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     public static boolean isOverEnchantedItem(ItemStack itemStack) {

@@ -59,6 +59,8 @@ public class ShulkerPreview extends Module {
     @Override
     public void onDisable() {
         super.onDisable();
+
+        this.setDisplayStack(new ItemStack(BlockUtils.shulkerList.get(new Random().nextInt(BlockUtils.shulkerList.size()))));
     }
 
     @SubscribeEvent

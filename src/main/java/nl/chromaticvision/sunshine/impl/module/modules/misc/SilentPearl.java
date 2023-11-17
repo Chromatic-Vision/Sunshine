@@ -1,6 +1,8 @@
 package nl.chromaticvision.sunshine.impl.module.modules.misc;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemEnderPearl;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
@@ -12,7 +14,8 @@ public class SilentPearl extends Module {
     public SilentPearl() {
         super("SilentPearl",
                 "Allows you to throw automatically an ender pearl from your hotbar on enable",
-                Category.MISC
+                Category.MISC,
+                new ItemStack(Items.ENDER_PEARL)
         );
     }
 

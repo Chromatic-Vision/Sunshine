@@ -11,10 +11,20 @@ public class RenderUtils {
         BufferBuilder BufferBuilder = tessellator.getBuffer();
 
         BufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-        BufferBuilder.pos(x, y + height, zLevel).tex((float) (textureX) * 0.00390625f, (float) (textureY + height) * 0.00390625f).endVertex();
-        BufferBuilder.pos(x + width, y + height, zLevel).tex((float) (textureX + width) * 0.00390625f, (float) (textureY + height) * 0.00390625f).endVertex();
-        BufferBuilder.pos(x + width, y, zLevel).tex((float) (textureX + width) * 0.00390625f, (float) (textureY) * 0.00390625f).endVertex();
-        BufferBuilder.pos(x, y, zLevel).tex((float) (textureX) * 0.00390625f, (float) (textureY) * 0.00390625f).endVertex();
+        BufferBuilder.pos(x, y + height, zLevel)
+                .tex((float) (textureX) * (1f / 256),
+                        (float) (textureY + height) * (1f / 256)).endVertex();
+
+        BufferBuilder.pos(x + width, y + height, zLevel)
+                .tex((float) (textureX + width) * (1f / 256),
+                        (float) (textureY + height) * (1f / 256)).endVertex();
+
+        BufferBuilder.pos(x + width, y, zLevel)
+                .tex((float) (textureX + width) * (1f / 256),
+                (float) (textureY) * (1f / 256)).endVertex();
+
+        BufferBuilder.pos(x, y, zLevel).tex((float) (textureX) * (1f / 256),
+                (float) (textureY) * (1f / 256)).endVertex();
 
         tessellator.draw();
     }

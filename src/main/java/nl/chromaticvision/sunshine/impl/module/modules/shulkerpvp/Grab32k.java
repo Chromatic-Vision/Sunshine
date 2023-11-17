@@ -5,6 +5,7 @@ import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.ContainerHopper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -25,9 +26,15 @@ public class Grab32k extends Module {
                 new ItemStack(Blocks.HOPPER));
     }
 
-    public final Setting<Boolean> autoClose = register(new Setting<>("Auto Close", true));
-    public final Setting<Integer> maxHopperRange = register(new Setting<>("Max Hopper Range", 4, 1, 7));
-    public final Setting<Boolean> swap = register(new Setting<>("Swap 32k to empty slot", true));
+    enum CloseMode {
+        OFF,
+        NORMAL,
+        SECRET
+    }
+
+    public final Setting<CloseMode> autoClose = register(new Setting<>("AutoClose", CloseMode.SECRET));
+    public final Setting<Boolean> select32k = register(new Setting<>("Select32kSlot", false));
+    public final Setting<Integer> maxHopperRange = register(new Setting<>("MaxHopperRange", 4, 1, 7));
 
     public boolean droppedAll = false;
     public BlockPos hopperPos = null;
@@ -46,7 +53,7 @@ public class Grab32k extends Module {
     }
 
     @Override
-    public void onTick() {
+    public void onFastTick() {
 
         if (!safeToUpdate()) return;
 
@@ -112,14 +119,37 @@ public class Grab32k extends Module {
 
                     if (InventoryUtils.isOverEnchantedItem(slotStack)) {
 
+                        int slot = InventoryUtils.findHotbarReverted32k() != -1
+                                ? InventoryUtils.findHotbarReverted32k()
+
+                                :
+
+                                InventoryUtils.findHotbarItem(Item.getItemFromBlock(Blocks.AIR)) != -1
+                                        ? InventoryUtils.findHotbarItem(Item.getItemFromBlock(Blocks.AIR))
+
+                                        :
+
+                                        mc.player.inventory.currentItem;
+
                         mc.playerController.windowClick(mc.player.openContainer.windowId,
                                 i,
-                                mc.player.inventory.currentItem,
+                                slot,
                                 ClickType.SWAP,
                                 mc.player
                         );
 
-                        if (autoClose.getValue()) mc.displayGuiScreen(null);
+                        InventoryUtils.update(select32k.getValue() ? slot : mc.player.inventory.currentItem, false);
+
+                        switch (autoClose.getValue()) {
+                            case OFF:
+                                break;
+                            case NORMAL:
+                                mc.player.closeScreen();
+                                break;
+                            case SECRET:
+                                mc.displayGuiScreen(null);
+                                break;
+                        }
 
                         disable();
                         return;

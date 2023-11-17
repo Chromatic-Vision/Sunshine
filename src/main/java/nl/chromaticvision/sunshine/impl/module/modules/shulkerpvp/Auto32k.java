@@ -1,5 +1,6 @@
 package nl.chromaticvision.sunshine.impl.module.modules.shulkerpvp;
 
+import net.minecraft.block.BlockDirectional;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ClickType;
@@ -44,7 +45,15 @@ public class Auto32k extends Module {
         DOWN
     }
 
+    enum CloseMode {
+        OFF,
+        NORMAL,
+        SECRET
+    }
+
+    public final Setting<CloseMode> autoClose = register(new Setting<>("AutoClose", CloseMode.SECRET));
     public final Setting<Boolean> silent = register(new Setting<>("Silent", false));
+    public final Setting<Boolean> blockShulker = register(new Setting<>("BlockShulker", false));
     public final Setting<Boolean> select32k = register(new Setting<>("Select32kSlot", false));
     public final Setting<Integer> placeRange = register(new Setting<>("PlaceRange", 3, 2, 6));
     public final Setting<Double> airPlaceRange = register(new Setting<>("AirPlaceRange", 2.0, 0.0,5.0));
@@ -244,11 +253,43 @@ public class Auto32k extends Module {
                             ClickType.SWAP,
                             mc.player
                     );
+
+                    switch (autoClose.getValue()) {
+                        case OFF:
+                            break;
+                        case NORMAL:
+                            mc.player.closeScreen();
+                            break;
+                        case SECRET:
+                            mc.displayGuiScreen(null);
+                            break;
+                    }
+
+                    if (blockShulker.getValue()) {
+
+                        int solidBlock = InventoryUtils.getSolidBlockInHotbarNoShulker();
+
+                        if (solidBlock != -1) {
+
+                            try {
+                                InventoryUtils.update(solidBlock, silent.getValue());
+                                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
+                                BlockUtils.placeBlockDirectly(dispenserPos.offset(dispenserRotation.getOpposite())
+                                        .offset(mc.world.getBlockState(dispenserPos.offset(dispenserRotation.getOpposite())).getValue(BlockDirectional.FACING)));
+                                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
+
+                                System.out.println(dispenserPos.offset(dispenserRotation.getOpposite())
+                                        .offset(mc.world.getBlockState(dispenserPos.offset(dispenserRotation.getOpposite())).getValue(BlockDirectional.FACING)));
+                            } catch (IllegalArgumentException ignored) {
+                                MessageUtils.addNotificationToast("Exception: blocking shulker", "Block direction value empty");
+                            }
+                        }
+                    }
+
                     InventoryUtils.update(select32k.getValue() ? slot : mc.player.inventory.currentItem, false);
-                    mc.displayGuiScreen(null);
 
                     completedIn = System.currentTimeMillis() - time;
-//                    MessageUtils.sendClientChatMessage("Completed in " + completedIn + " ms.");
+                    MessageUtils.sendClientChatMessage("Completed in " + completedIn + " ms.");
                     disable();
                     break;
                 }

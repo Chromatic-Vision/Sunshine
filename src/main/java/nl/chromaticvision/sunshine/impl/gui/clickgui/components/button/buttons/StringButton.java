@@ -44,19 +44,21 @@ public class StringButton extends Button {
         if (listening) {
             switch (keyCode) {
                 case 1:
+
                     listening = false;
                     input = "";
 
                     break;
                 case 14:
+
                     if (input != null && input.length() > 0) {
                         input = input.substring(0, input.length() - 1);
                         break;
                     }
-                case 28:
-                    listening = false;
 
-                    System.out.println(parentSetting.getName());
+                case 28:
+
+                    listening = false;
 
                     if (parentSetting.getName().equalsIgnoreCase("DisplayName") && input.equalsIgnoreCase("")) {
                         parentSetting.setValue(ClickGUI.getInstance().settingPanelComponent.getCurrentModule().getName());
