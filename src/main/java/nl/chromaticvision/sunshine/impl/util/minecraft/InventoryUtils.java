@@ -103,6 +103,19 @@ public class InventoryUtils {
         return -1;
     }
 
+    public static int findHotbar32k() {
+        for (int i = 0; i < 9; ++i) {
+
+            ItemStack slot = mc.player.inventory.mainInventory.get(i);
+
+            if (isOverEnchantedItem(slot) && slot.getItem() instanceof ItemSword) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     public static int findShulkerWith32ksInside() {
         for (int i = 0; i < 36; ++i) {
             ItemStack itemStack = mc.player.inventory.getStackInSlot(i);

@@ -13,8 +13,10 @@ import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import nl.chromaticvision.sunshine.Main;
 import nl.chromaticvision.sunshine.impl.module.Category;
 import nl.chromaticvision.sunshine.impl.module.Module;
+import nl.chromaticvision.sunshine.impl.module.ModuleManager;
 import nl.chromaticvision.sunshine.impl.module.settings.Setting;
 import nl.chromaticvision.sunshine.impl.util.minecraft.BlockUtils;
 import nl.chromaticvision.sunshine.impl.util.minecraft.InventoryUtils;
@@ -63,6 +65,11 @@ public class Auto32k extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
+
+        if (Main.moduleManager.getModuleByName("32kGrab").isEnabled()) {
+            Main.moduleManager.getModuleByName("32kGrab").disable();
+        }
+
         execute();
     }
 
@@ -187,6 +194,7 @@ public class Auto32k extends Module {
         // Place dispenser
         InventoryUtils.update(dispenser, silent.getValue());
 
+        mc.player.setSprinting(false);
         mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
         BlockUtils.placeBlockDirectly(dispenserPos);
         mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
@@ -272,14 +280,13 @@ public class Auto32k extends Module {
                         if (solidBlock != -1) {
 
                             try {
+
                                 InventoryUtils.update(solidBlock, silent.getValue());
                                 mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
                                 BlockUtils.placeBlockDirectly(dispenserPos.offset(dispenserRotation.getOpposite())
                                         .offset(mc.world.getBlockState(dispenserPos.offset(dispenserRotation.getOpposite())).getValue(BlockDirectional.FACING)));
                                 mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
 
-                                System.out.println(dispenserPos.offset(dispenserRotation.getOpposite())
-                                        .offset(mc.world.getBlockState(dispenserPos.offset(dispenserRotation.getOpposite())).getValue(BlockDirectional.FACING)));
                             } catch (IllegalArgumentException ignored) {
                                 MessageUtils.addNotificationToast("Exception: blocking shulker", "Block direction value empty");
                             }

@@ -83,6 +83,13 @@ public class Grab32k extends Module {
 
     public void update() {
 
+        int overEnchantedSword = InventoryUtils.findHotbar32k();
+
+        if (overEnchantedSword != -1) {
+            disable();
+            return;
+        }
+
         if (!clickedHopper) {
 
             hopperPos = getRandomHopper();
@@ -94,6 +101,9 @@ public class Grab32k extends Module {
             System.out.println(hopperPos);
 
             BlockUtils.rightClickBlockDirectly(hopperPos);
+
+            if (!(mc.player.openContainer instanceof ContainerHopper) || mc.player.openContainer.inventorySlots == null)
+                return;
 
             clickedHopper = true;
         } else {
@@ -151,7 +161,6 @@ public class Grab32k extends Module {
                                 break;
                         }
 
-                        disable();
                         return;
                     }
                 }

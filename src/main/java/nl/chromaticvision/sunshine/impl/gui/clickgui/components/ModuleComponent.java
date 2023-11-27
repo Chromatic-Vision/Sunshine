@@ -32,7 +32,7 @@ public class ModuleComponent {
         Gui.drawRect(x, y, x + width, y + height, parentModule.isEnabled() ? new Color(34, 155, 66).getRGB() : new Color(60, 30, 30).getRGB());
         mc.fontRenderer.drawString(parentModule.getDisplayName(), x + 2, y + 5, -1);
 
-        if (parentModule.getSettings().size() > 1) mc.fontRenderer.drawString("+", x + width - 10, y + 5, -1);
+        if (parentModule.getSettings().size() > 2) mc.fontRenderer.drawString("+", x + width - 10, y + 5, -1);
 
     }
 

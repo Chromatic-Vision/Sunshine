@@ -9,7 +9,9 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import nl.chromaticvision.sunshine.impl.module.modules.exploit.AnvilSwap;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.ClickGUIModule;
+import nl.chromaticvision.sunshine.impl.module.modules.misc.ShulkerHopper;
 import nl.chromaticvision.sunshine.impl.module.modules.misc.SilentPearl;
+import nl.chromaticvision.sunshine.impl.module.modules.misc.Tester;
 import nl.chromaticvision.sunshine.impl.module.modules.render.FullBright;
 import nl.chromaticvision.sunshine.impl.module.modules.render.ShulkerPreview;
 import nl.chromaticvision.sunshine.impl.module.modules.shulkerpvp.Aura32k;
@@ -33,8 +35,9 @@ public class ModuleManager {
 
         //misc
         modules.add(new ClickGUIModule());
-        //modules.add(new ShulkerHopper());
+        modules.add(new ShulkerHopper());
         modules.add(new SilentPearl());
+//        modules.add(new Tester());
 
         //exploit
         modules.add(new AnvilSwap());
